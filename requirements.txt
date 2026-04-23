@@ -1,0 +1,15 @@
+pandas
+numpy
+pyarrow
+pytest
+scikit-learn
+lightgbm
+catboost
+xgboost
+torch
+fastapi
+uvicorn[standard]
+pydantic>=2.0
+pyyaml
+slowapi
+httpx

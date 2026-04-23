@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akbank — Kredi Risk Dashboard</title>
+  <style>
+    /* ── RESET & ROOT ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red:        #E30A17;
+      --red-dark:   #b5070f;
+      --red-light:  #fef0f0;
+      --gray-light: #f5f5f5;
+      --gray-mid:   #e0e0e0;
+      --gray-text:  #666;
+      --dark:       #1a1a1a;
+      --white:      #fff;
+      --green:      #1a8c4e;
+      --yellow:     #e8a000;
+      --font:       'Segoe UI', Arial, sans-serif;
+      --radius:     8px;
+      --shadow:     0 2px 12px rgba(0,0,0,0.08);
+    }
+    body { font-family: var(--font); color: var(--dark); background: var(--gray-light); }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    button { cursor: pointer; font-family: inherit; }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: var(--white);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky; top: 0; z-index: 200;
+    }
+    .navbar-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 24px;
+      display: flex; align-items: center; height: 60px;
+      gap: 16px;
+    }
+    .logo-mark {
+      display: flex; align-items: center; gap: 8px; margin-right: 24px;
+    }
+    .logo-svg { width: 36px; height: 36px; }
+    .logo-text { font-size: 22px; font-weight: 700; color: var(--red); letter-spacing: -0.5px; }
+    .logo-sub { font-size: 11px; color: var(--gray-text); letter-spacing: 1px; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 4px; flex: 1; }
+    .nav-links a {
+      padding: 6px 14px; border-radius: 4px; font-size: 13px; color: var(--dark);
+      transition: background .15s;
+    }
+    .nav-links a:hover, .nav-links a.active { background: var(--red-light); color: var(--red); }
+    .nav-badge {
+      margin-left: auto;
+      background: var(--red); color: var(--white);
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 12px;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    .page-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .page-subtitle { font-size: 13px; color: var(--gray-text); margin-bottom: 24px; }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--red);
+      margin-bottom: 12px; padding-left: 2px;
+    }
+
+    /* ── METRIC CARDS ── */
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+      margin-bottom: 32px;
+    }
+    .metric-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 20px 24px;
+      border-top: 3px solid var(--gray-mid);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .metric-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+    .metric-card.primary { border-top-color: var(--red); }
+    .metric-card.secondary { border-top-color: #3a7bd5; }
+    .metric-card.tertiary { border-top-color: #8e44ad; }
+    .metric-card.quaternary { border-top-color: var(--green); }
+    .metric-label { font-size: 11px; color: var(--gray-text); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+    .metric-value { font-size: 32px; font-weight: 700; line-height: 1; }
+    .metric-card.primary .metric-value { color: var(--red); }
+    .metric-card.secondary .metric-value { color: #3a7bd5; }
+    .metric-card.tertiary .metric-value { color: #8e44ad; }
+    .metric-card.quaternary .metric-value { color: var(--green); }
+    .metric-desc { font-size: 12px; color: var(--gray-text); margin-top: 6px; }
+    .metric-model { font-size: 10px; color: #aaa; margin-top: 4px; font-style: italic; }
+
+    /* ── TWO-COLUMN SCORING SECTION ── */
+    .scoring-grid {
+      display: grid; grid-template-columns: 1fr 380px; gap: 24px;
+      margin-bottom: 32px; align-items: start;
+    }
+
+    /* ── ACCORDION FORM ── */
+    .form-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .form-header {
+      background: var(--dark); color: var(--white);
+      padding: 16px 20px; display: flex; align-items: center; gap: 10px;
+    }
+    .form-header-title { font-size: 15px; font-weight: 700; }
+    .form-header-sub { font-size: 12px; opacity: .6; margin-top: 2px; }
+    .form-toolbar {
+      padding: 12px 20px; border-bottom: 1px solid var(--gray-mid);
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    }
+    .btn {
+      padding: 7px 14px; border-radius: 5px; border: none;
+      font-size: 12px; font-weight: 600;
+      transition: background .15s, transform .1s;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-red { background: var(--red); color: var(--white); }
+    .btn-red:hover { background: var(--red-dark); }
+    .btn-outline { background: transparent; color: var(--dark); border: 1.5px solid var(--gray-mid); }
+    .btn-outline:hover { border-color: var(--red); color: var(--red); }
+    .btn-green { background: var(--green); color: var(--white); }
+    .btn-green:hover { background: #145c38; }
+
+    .upload-label {
+      padding: 7px 14px; border-radius: 5px; border: 1.5px solid var(--gray-mid);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .upload-label:hover { border-color: var(--red); color: var(--red); }
+
+    /* Accordion */
+    .accordion { border-bottom: 1px solid var(--gray-mid); }
+    .accordion-header {
+      padding: 12px 20px; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      user-select: none; background: var(--gray-light);
+      border-bottom: 1px solid var(--gray-mid);
+      font-size: 13px; font-weight: 600;
+      transition: background .15s;
+    }
+    .accordion-header:hover { background: var(--red-light); }
+    .accordion-header .badge {
+      background: var(--red); color: var(--white);
+      font-size: 10px; padding: 2px 7px; border-radius: 10px;
+    }
+    .accordion-arrow { font-size: 10px; color: var(--gray-text); transition: transform .2s; }
+    .accordion-header.open .accordion-arrow { transform: rotate(180deg); }
+    .accordion-body { display: none; padding: 16px 20px; }
+    .accordion-body.open { display: block; }
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+    .field-group { display: flex; flex-direction: column; gap: 3px; }
+    .field-label { font-size: 11px; color: var(--gray-text); font-weight: 600; }
+    .field-rank { font-size: 9px; color: #bbb; }
+    .field-input {
+      padding: 6px 10px; border: 1.5px solid var(--gray-mid);
+      border-radius: 5px; font-size: 12px; font-family: inherit;
+      transition: border-color .15s;
+    }
+    .field-input:focus { outline: none; border-color: var(--red); }
+    .field-input::placeholder { color: #ccc; }
+
+    /* Sequence toggle */
+    .seq-toggle { padding: 12px 20px; border-bottom: 1px solid var(--gray-mid); }
+    .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .toggle-label { font-size: 13px; font-weight: 600; }
+    .toggle-switch { position: relative; width: 40px; height: 22px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--gray-mid); border-radius: 22px; cursor: pointer;
+      transition: background .2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      height: 16px; width: 16px;
+      left: 3px; top: 3px;
+      background: var(--white); border-radius: 50%;
+      transition: transform .2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--red); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+    .seq-table-wrap { overflow-x: auto; display: none; }
+    .seq-table-wrap.open { display: block; }
+    .seq-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .seq-table th {
+      background: var(--dark); color: var(--white);
+      padding: 6px 8px; text-align: left; font-weight: 600; font-size: 10px;
+    }
+    .seq-table td { padding: 5px 8px; border-bottom: 1px solid var(--gray-mid); }
+    .seq-table input {
+      width: 100%; padding: 3px 6px; border: 1px solid var(--gray-mid);
+      border-radius: 3px; font-size: 11px;
+    }
+    .seq-table tr:hover td { background: var(--gray-light); }
+
+    .form-footer {
+      padding: 14px 20px; background: var(--gray-light);
+      border-top: 1px solid var(--gray-mid);
+    }
+    .calc-btn {
+      width: 100%; padding: 12px; border-radius: 6px; border: none;
+      background: var(--red); color: var(--white);
+      font-size: 15px; font-weight: 700;
+      letter-spacing: 0.3px;
+      transition: background .15s, transform .1s;
+    }
+    .calc-btn:hover { background: var(--red-dark); }
+    .calc-btn:active { transform: scale(.98); }
+
+    /* ── RIGHT PANEL ── */
+    .result-panel { display: flex; flex-direction: column; gap: 16px; }
+
+    .panel-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 20px;
+    }
+
+    /* SVG Gauge */
+    .gauge-wrap { text-align: center; padding: 4px 0; }
+    .gauge-svg { overflow: visible; }
+    .gauge-value-text { font-size: 28px; font-weight: 700; fill: var(--dark); }
+    .gauge-label-text { font-size: 11px; fill: var(--gray-text); }
+    .gauge-model-text { font-size: 10px; fill: #bbb; font-style: italic; }
+
+    /* Progress bars */
+    .prob-bars { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+    .prob-row { display: flex; flex-direction: column; gap: 4px; }
+    .prob-meta { display: flex; justify-content: space-between; align-items: center; }
+    .prob-name { font-size: 12px; font-weight: 600; }
+    .prob-pct { font-size: 13px; font-weight: 700; }
+    .prob-track {
+      height: 8px; background: var(--gray-mid); border-radius: 4px; overflow: hidden;
+    }
+    .prob-fill {
+      height: 100%; border-radius: 4px;
+      transition: width .5s ease;
+    }
+    .prob-fill.lgbm  { background: #3a7bd5; }
+    .prob-fill.lstm  { background: #8e44ad; }
+    .prob-fill.ens   { background: var(--red); }
+
+    /* Decision box */
+    .decision-box {
+      border-radius: 8px; padding: 16px 20px; text-align: center;
+      transition: all .3s;
+    }
+    .decision-box.low    { background: #e8f5ef; border: 2px solid var(--green); }
+    .decision-box.medium { background: #fff8e6; border: 2px solid var(--yellow); }
+    .decision-box.high   { background: var(--red-light); border: 2px solid var(--red); }
+    .decision-box.none   { background: var(--gray-light); border: 2px solid var(--gray-mid); }
+    .decision-verdict { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+    .decision-box.low    .decision-verdict { color: var(--green); }
+    .decision-box.medium .decision-verdict { color: var(--yellow); }
+    .decision-box.high   .decision-verdict { color: var(--red); }
+    .decision-box.none   .decision-verdict { color: var(--gray-text); }
+    .decision-band { font-size: 12px; color: var(--gray-text); margin-top: 4px; }
+    .decision-threshold { font-size: 10px; color: #aaa; margin-top: 2px; }
+
+    /* ── BOTTOM TABS ── */
+    .tabs-section { margin-bottom: 32px; }
+    .tab-nav { display: flex; gap: 0; border-bottom: 2px solid var(--gray-mid); margin-bottom: 0; }
+    .tab-btn {
+      padding: 10px 24px; border: none; background: transparent;
+      font-size: 13px; font-weight: 600; color: var(--gray-text);
+      border-bottom: 3px solid transparent; margin-bottom: -2px;
+      transition: color .15s, border-color .15s;
+    }
+    .tab-btn.active { color: var(--red); border-bottom-color: var(--red); }
+    .tab-btn:hover { color: var(--dark); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── FEATURE IMPORTANCE ── */
+    .fi-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 20px;
+    }
+    .fi-toolbar {
+      display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .fi-search {
+      flex: 1; min-width: 180px; padding: 7px 12px;
+      border: 1.5px solid var(--gray-mid); border-radius: 5px;
+      font-size: 12px; font-family: inherit;
+    }
+    .fi-search:focus { outline: none; border-color: var(--red); }
+    .fi-top-select {
+      padding: 7px 10px; border: 1.5px solid var(--gray-mid); border-radius: 5px;
+      font-size: 12px; font-family: inherit;
+    }
+    .fi-top-select:focus { outline: none; border-color: var(--red); }
+
+    .fi-chart { width: 100%; }
+    .fi-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 4px 0; border-bottom: 1px solid #f5f5f5;
+      transition: background .1s;
+    }
+    .fi-row:hover { background: var(--gray-light); border-radius: 4px; }
+    .fi-rank { width: 24px; font-size: 10px; color: #bbb; text-align: right; flex-shrink: 0; }
+    .fi-name { width: 200px; font-size: 12px; font-weight: 600; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .fi-bar-track { flex: 1; height: 14px; background: var(--gray-mid); border-radius: 7px; overflow: hidden; }
+    .fi-bar-fill { height: 100%; border-radius: 7px; background: linear-gradient(90deg, var(--red) 0%, #ff6b7a 100%); }
+    .fi-gain { width: 52px; font-size: 11px; color: var(--gray-text); text-align: right; flex-shrink: 0; }
+    .fi-pct { width: 44px; font-size: 11px; font-weight: 600; color: var(--red); text-align: right; flex-shrink: 0; }
+
+    /* ── CONFUSION MATRIX ── */
+    .cm-card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 28px;
+    }
+    .cm-layout { display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: start; }
+    .cm-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+    .cm-axis-label { font-size: 12px; font-weight: 700; color: var(--gray-text); text-align: center; margin-bottom: 8px; }
+    .cm-grid { display: grid; grid-template-columns: auto 1fr 1fr; grid-template-rows: auto 1fr 1fr; gap: 4px; }
+    .cm-header { font-size: 11px; font-weight: 700; color: var(--gray-text); text-align: center; padding: 4px 8px; }
+    .cm-row-label { font-size: 11px; font-weight: 700; color: var(--gray-text); writing-mode: horizontal-tb; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+    .cm-cell {
+      border-radius: 6px; padding: 20px 12px; text-align: center;
+      min-width: 110px;
+    }
+    .cm-cell.tn { background: #e8f5ef; }
+    .cm-cell.fp { background: #fff4f4; }
+    .cm-cell.fn { background: #fff4f4; }
+    .cm-cell.tp { background: #e8f5ef; }
+    .cm-count { font-size: 26px; font-weight: 800; }
+    .cm-cell.tn .cm-count, .cm-cell.tp .cm-count { color: var(--green); }
+    .cm-cell.fp .cm-count, .cm-cell.fn .cm-count { color: var(--red); }
+    .cm-label { font-size: 11px; color: var(--gray-text); margin-top: 4px; }
+    .cm-pct { font-size: 10px; color: #aaa; }
+
+    .cm-metrics { display: flex; flex-direction: column; gap: 12px; }
+    .cm-metric-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px; background: var(--gray-light); border-radius: 6px;
+    }
+    .cm-metric-name { font-size: 13px; font-weight: 600; }
+    .cm-metric-val { font-size: 18px; font-weight: 800; color: var(--red); }
+    .cm-metric-desc { font-size: 10px; color: var(--gray-text); margin-top: 1px; }
+    .cm-subtitle { font-size: 12px; color: var(--gray-text); margin-bottom: 12px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--dark); color: rgba(255,255,255,0.5);
+      padding: 28px 24px; text-align: center; font-size: 12px;
+    }
+    .footer strong { color: var(--white); }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-top: 8px; flex-wrap: wrap; }
+    .footer-links a { color: rgba(255,255,255,0.4); font-size: 11px; }
+    .footer-links a:hover { color: var(--red); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 999;
+      background: var(--dark); color: var(--white);
+      padding: 12px 20px; border-radius: 8px;
+      font-size: 13px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transform: translateY(80px); opacity: 0;
+      transition: transform .25s, opacity .25s;
+      max-width: 320px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 4px solid var(--green); }
+    .toast.warning { border-left: 4px solid var(--yellow); }
+    .toast.error   { border-left: 4px solid var(--red); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .scoring-grid { grid-template-columns: 1fr; }
+      .cm-layout { grid-template-columns: 1fr; }
+      .fi-name { width: 140px; }
+    }
+    @media (max-width: 600px) {
+      .metrics-grid { grid-template-columns: 1fr; }
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <div class="logo-mark">
+      <!-- Akbank logosu: kırmızı üçgen+bar SVG -->
+      <svg class="logo-svg" viewBox="0 0 40 40" fill="none">
+        <rect width="40" height="40" rx="6" fill="#E30A17"/>
+        <polygon points="8,32 20,10 32,32" fill="white" opacity=".9"/>
+        <rect x="8" y="33" width="24" height="4" rx="2" fill="white" opacity=".7"/>
+      </svg>
+      <div>
+        <div class="logo-text">Akbank</div>
+        <div class="logo-sub">Risk Analitik</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#metrics" class="active">Genel Bakış</a>
+      <a href="#scoring">Risk Değerlendirme</a>
+      <a href="#analysis">Analiz</a>
+    </div>
+    <div class="nav-badge">Ensemble v20260422</div>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<div class="container">
+
+  <div style="margin-bottom:20px; margin-top:8px;">
+    <div class="page-title">Kredi Temerrüt Risk Dashboard</div>
+    <div class="page-subtitle">Home Credit — Ensemble Model (LGBM + LSTM) &nbsp;·&nbsp; Model ID: ensemble_top50_lstm_20260422 &nbsp;·&nbsp; Demo modu aktif</div>
+  </div>
+
+  <!-- ── SECTION 1: METRIC CARDS ── -->
+  <div id="metrics">
+    <div class="section-label">Model Performans Metrikleri</div>
+    <div class="metrics-grid">
+      <div class="metric-card primary">
+        <div class="metric-label">Ensemble AUC</div>
+        <div class="metric-value">0.9114</div>
+        <div class="metric-desc">Holdout test seti, ROC-AUC</div>
+        <div class="metric-model">LGBM + LSTM · w=0.55/0.45</div>
+      </div>
+      <div class="metric-card secondary">
+        <div class="metric-label">LGBM AUC</div>
+        <div class="metric-value">0.8783</div>
+        <div class="metric-desc">5-fold CV, Gradient Boosting</div>
+        <div class="metric-model">LightGBM · top-50 features</div>
+      </div>
+      <div class="metric-card tertiary">
+        <div class="metric-label">LSTM AUC</div>
+        <div class="metric-value">0.8914</div>
+        <div class="metric-desc">Sequence + statik özellikler</div>
+        <div class="metric-model">HybridLSTM · seq_len=10</div>
+      </div>
+      <div class="metric-card quaternary">
+        <div class="metric-label">F1 Score</div>
+        <div class="metric-value">0.5704</div>
+        <div class="metric-desc">Eşik=0.6322 · Hassasiyet dengeli</div>
+        <div class="metric-model">492,017 eğitim örneği</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: SCORING ── -->
+  <div id="scoring">
+    <div class="section-label">Başvuru Risk Değerlendirmesi</div>
+    <div class="scoring-grid">
+
+      <!-- SOL: FORM -->
+      <div class="form-card">
+        <div class="form-header">
+          <div>
+            <div class="form-header-title">Başvuru Bilgileri</div>
+            <div class="form-header-sub">50 özellik · Otomatik doldurma desteklenir</div>
+          </div>
+        </div>
+
+        <!-- Araç çubuğu -->
+        <div class="form-toolbar">
+          <button class="btn btn-outline" onclick="autofillDemo()">Demo Doldur</button>
+          <button class="btn btn-outline" onclick="autofillHighRisk()">Yüksek Risk Demo</button>
+          <label class="upload-label" title="JSON veya metin dosyası yükle">
+            📂 Dosya Yükle
+            <input type="file" accept=".json,.txt" style="display:none" onchange="parseUploadedFile(event)">
+          </label>
+          <button class="btn btn-outline" onclick="clearForm()">Temizle</button>
+          <button class="btn btn-green" onclick="exportJSON()">JSON İndir</button>
+        </div>
+
+        <!-- ACCORDION: EXT SOURCE -->
+        <div class="accordion">
+          <div class="accordion-header open" onclick="toggleAccordion(this)">
+            <span>🔢 Kredi Skorları (EXT_SOURCE)</span>
+            <span><span class="badge">7</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+          </div>
+          <div class="accordion-body open">
+            <div class="feature-grid" id="grp-ext"></div>
+          </div>
+        </div>
+
+        <!-- ACCORDION: KREDI -->
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>💳 Kredi Bilgileri</span>
+            <span><span class="badge">8</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+          </div>
+          <div class="accordion-body">
+            <div class="feature-grid" id="grp-credit"></div>
+          </div>
+        </div>
+
+        <!-- ACCORDION: SÜRE/GÜN -->
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>📅 Süreler ve Günler</span>
+            <span><span class="badge">8</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+          </div>
+          <div class="accordion-body">
+            <div class="feature-grid" id="grp-days"></div>
+          </div>
+        </div>
+
+        <!-- ACCORDION: BUREAU -->
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>🏦 Büro Verileri</span>
+            <span><span class="badge">8</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+          </div>
+          <div class="accordion-body">
+            <div class="feature-grid" id="grp-bureau"></div>
+          </div>
+        </div>
+
+        <!-- ACCORDION: INSTALLMENT -->
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>📋 Taksit Geçmişi</span>
+            <span><span class="badge">6</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+          </div>
+          <div class="accordion-body">
+            <div class="feature-grid" id="grp-inst"></div>
+          </div>
+        </div>
+
+        <!-- ACCORDION: KREDI KARTI -->
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>💰 Kredi Kartı Verileri</span>
+            <span><span class="badge">6</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+          </div>
+          <div class="accordion-body">
+            <div class="feature-grid" id="grp-cc"></div>
+          </div>
+        </div>
+
+        <!-- ACCORDION: DEMOGRAFİK -->
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>👤 Demografik & Kategorik</span>
+            <span><span class="badge">7</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+          </div>
+          <div class="accordion-body">
+            <div class="feature-grid" id="grp-demo"></div>
+          </div>
+        </div>
+
+        <!-- SEQ TOGGLE -->
+        <div class="seq-toggle">
+          <div class="toggle-row">
+            <span class="toggle-label">🔄 Önceki Başvurular (LSTM)</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="seq-toggle-cb" onchange="toggleSeq(this)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="seq-table-wrap" id="seq-wrap">
+            <table class="seq-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Kredi Tutarı</th>
+                  <th>Anüite</th>
+                  <th>Kredi Türü</th>
+                  <th>Durum</th>
+                  <th>Gün (geçmiş)</th>
+                </tr>
+              </thead>
+              <tbody id="seq-tbody">
+                <tr>
+                  <td>1</td>
+                  <td><input type="number" placeholder="180000" id="seq_1_amt"></td>
+                  <td><input type="number" placeholder="9000" id="seq_1_ann"></td>
+                  <td><input type="text" placeholder="Cash loans" id="seq_1_type"></td>
+                  <td><input type="text" placeholder="Approved" id="seq_1_status"></td>
+                  <td><input type="number" placeholder="-730" id="seq_1_days"></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td><input type="number" placeholder="90000" id="seq_2_amt"></td>
+                  <td><input type="number" placeholder="4500" id="seq_2_ann"></td>
+                  <td><input type="text" placeholder="Consumer loans" id="seq_2_type"></td>
+                  <td><input type="text" placeholder="Refused" id="seq_2_status"></td>
+                  <td><input type="number" placeholder="-1460" id="seq_2_days"></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td><input type="number" placeholder="50000" id="seq_3_amt"></td>
+                  <td><input type="number" placeholder="2500" id="seq_3_ann"></td>
+                  <td><input type="text" placeholder="Revolving loans" id="seq_3_type"></td>
+                  <td><input type="text" placeholder="Approved" id="seq_3_status"></td>
+                  <td><input type="number" placeholder="-2190" id="seq_3_days"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- HESAPLA -->
+        <div class="form-footer">
+          <button class="calc-btn" onclick="calculatePrediction()">🔍 Risk Hesapla</button>
+        </div>
+      </div>
+
+      <!-- SAĞ: SONUÇ PANELİ -->
+      <div class="result-panel">
+
+        <!-- Gauge -->
+        <div class="panel-card">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Risk Skoru</div>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" width="220" height="130" viewBox="0 0 220 130">
+              <!-- arka plan yay -->
+              <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#eee" stroke-width="18" stroke-linecap="round"/>
+              <!-- renk dilimi: yeşil -->
+              <path d="M 20 110 A 90 90 0 0 1 87 26" fill="none" stroke="#1a8c4e" stroke-width="18" stroke-linecap="round" opacity=".3"/>
+              <!-- renk dilimi: sarı -->
+              <path d="M 87 26 A 90 90 0 0 1 155 37" fill="none" stroke="#e8a000" stroke-width="18" stroke-linecap="round" opacity=".3"/>
+              <!-- renk dilimi: kırmızı -->
+              <path d="M 155 37 A 90 90 0 0 1 200 110" fill="none" stroke="#E30A17" stroke-width="18" stroke-linecap="round" opacity=".3"/>
+              <!-- aktif yay (JS ile güncellenir) -->
+              <path id="gauge-arc" d="M 20 110 A 90 90 0 0 1 20 110" fill="none" stroke="#E30A17" stroke-width="18" stroke-linecap="round"/>
+              <!-- iğne -->
+              <line id="gauge-needle" x1="110" y1="110" x2="110" y2="28" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="110" cy="110" r="5" fill="#1a1a1a"/>
+              <!-- etiketler -->
+              <text x="14" y="126" font-size="10" fill="#1a8c4e" font-weight="700">0</text>
+              <text x="96" y="18" font-size="10" fill="#e8a000" font-weight="700" text-anchor="middle">50</text>
+              <text x="200" y="126" font-size="10" fill="#E30A17" font-weight="700" text-anchor="end">100</text>
+              <!-- değer -->
+              <text id="gauge-value" class="gauge-value-text" x="110" y="94" text-anchor="middle">—</text>
+              <text class="gauge-label-text" x="110" y="110" text-anchor="middle">Risk Skoru</text>
+              <text id="gauge-model-lbl" class="gauge-model-text" x="110" y="124" text-anchor="middle">henüz hesaplanmadı</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Olasılıklar -->
+        <div class="panel-card">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px;">Model Olasılıkları</div>
+          <div class="prob-bars">
+            <div class="prob-row">
+              <div class="prob-meta">
+                <span class="prob-name" style="color:#3a7bd5;">P<sub>LGBM</sub></span>
+                <span class="prob-pct" id="pct-lgbm" style="color:#3a7bd5;">—</span>
+              </div>
+              <div class="prob-track"><div class="prob-fill lgbm" id="bar-lgbm" style="width:0%"></div></div>
+            </div>
+            <div class="prob-row">
+              <div class="prob-meta">
+                <span class="prob-name" style="color:#8e44ad;">P<sub>LSTM</sub></span>
+                <span class="prob-pct" id="pct-lstm" style="color:#8e44ad;">—</span>
+              </div>
+              <div class="prob-track"><div class="prob-fill lstm" id="bar-lstm" style="width:0%"></div></div>
+            </div>
+            <div class="prob-row">
+              <div class="prob-meta">
+                <span class="prob-name" style="color:var(--red);">P<sub>Ensemble</sub></span>
+                <span class="prob-pct" id="pct-ens" style="color:var(--red);">—</span>
+              </div>
+              <div class="prob-track"><div class="prob-fill ens" id="bar-ens" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#bbb;margin-top:10px;">
+            P_ens = 0.55 × P_lgbm + 0.45 × P_lstm &nbsp;·&nbsp; Eşik: 0.6322
+          </div>
+        </div>
+
+        <!-- Karar -->
+        <div class="panel-card" style="padding:0; overflow:hidden;">
+          <div id="decision-box" class="decision-box none" style="border-radius:8px;">
+            <div class="decision-verdict" id="decision-verdict">—</div>
+            <div class="decision-band" id="decision-band">Henüz hesaplanmadı</div>
+            <div class="decision-threshold" id="decision-threshold">Eşik: 0.6322 · Ensemble</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: TABS ── -->
+  <div id="analysis" class="tabs-section">
+    <div class="section-label">Model Analizi</div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('importance', this)">📊 Özellik Önem Sıralaması</button>
+      <button class="tab-btn" onclick="switchTab('confusion', this)">🔢 Confusion Matrix</button>
+    </div>
+
+    <!-- Özellik Önem Sıralaması -->
+    <div class="tab-panel active" id="tab-importance">
+      <div class="fi-card">
+        <div class="fi-toolbar">
+          <input class="fi-search" type="text" placeholder="Özellik ara..." id="fi-search" oninput="renderFeatureImportance()">
+          <select class="fi-top-select" id="fi-top" onchange="renderFeatureImportance()">
+            <option value="15">İlk 15</option>
+            <option value="25">İlk 25</option>
+            <option value="50">Tümü (50)</option>
+          </select>
+          <span style="font-size:12px;color:var(--gray-text);">LGBM gain bazlı · CV-5</span>
+        </div>
+        <div class="fi-chart" id="fi-chart"></div>
+      </div>
+    </div>
+
+    <!-- Confusion Matrix -->
+    <div class="tab-panel" id="tab-confusion">
+      <div class="cm-card">
+        <div class="cm-layout">
+          <div>
+            <div class="cm-title">Confusion Matrix — Holdout Test</div>
+            <div class="cm-subtitle">122,005 örnek · Eşik: 0.6322</div>
+            <div class="cm-axis-label">Tahmin Edilen</div>
+            <div class="cm-grid">
+              <div></div>
+              <div class="cm-header">Negatif (0)</div>
+              <div class="cm-header">Pozitif (1)</div>
+              <div class="cm-row-label">Gerçek Negatif</div>
+              <div class="cm-cell tn">
+                <div class="cm-count">108,469</div>
+                <div class="cm-label">Doğru Negatif (TN)</div>
+                <div class="cm-pct">88.9%</div>
+              </div>
+              <div class="cm-cell fp">
+                <div class="cm-count">4,606</div>
+                <div class="cm-label">Yanlış Pozitif (FP)</div>
+                <div class="cm-pct">3.8%</div>
+              </div>
+              <div class="cm-row-label">Gerçek Pozitif</div>
+              <div class="cm-cell fn">
+                <div class="cm-count">4,130</div>
+                <div class="cm-label">Yanlış Negatif (FN)</div>
+                <div class="cm-pct">3.4%</div>
+              </div>
+              <div class="cm-cell tp">
+                <div class="cm-count">5,800</div>
+                <div class="cm-label">Doğru Pozitif (TP)</div>
+                <div class="cm-pct">4.8% ✓</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cm-metrics">
+            <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Performans Metrikleri</div>
+            <div class="cm-metric-row">
+              <div>
+                <div class="cm-metric-name">Doğruluk (Accuracy)</div>
+                <div class="cm-metric-desc">TN+TP / Toplam</div>
+              </div>
+              <div class="cm-metric-val">93.67%</div>
+            </div>
+            <div class="cm-metric-row">
+              <div>
+                <div class="cm-metric-name">Hassasiyet (Precision)</div>
+                <div class="cm-metric-desc">TP / (TP+FP)</div>
+              </div>
+              <div class="cm-metric-val">55.74%</div>
+            </div>
+            <div class="cm-metric-row">
+              <div>
+                <div class="cm-metric-name">Duyarlılık (Recall)</div>
+                <div class="cm-metric-desc">TP / (TP+FN)</div>
+              </div>
+              <div class="cm-metric-val">58.40%</div>
+            </div>
+            <div class="cm-metric-row">
+              <div>
+                <div class="cm-metric-name">F1 Skoru</div>
+                <div class="cm-metric-desc">Harmonic mean (Prec, Recall)</div>
+              </div>
+              <div class="cm-metric-val">57.04%</div>
+            </div>
+            <div class="cm-metric-row">
+              <div>
+                <div class="cm-metric-name">ROC-AUC</div>
+                <div class="cm-metric-desc">Ensemble model</div>
+              </div>
+              <div class="cm-metric-val" style="color:var(--red);font-size:22px;">0.9114</div>
+            </div>
+            <div class="cm-metric-row">
+              <div>
+                <div class="cm-metric-name">KS İstatistiği</div>
+                <div class="cm-metric-desc">Max ayırım gücü</div>
+              </div>
+              <div class="cm-metric-val">0.682</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <strong>Akbank Risk Analitik</strong> — Ensemble Kredi Risk Modeli &nbsp;·&nbsp; Model ID: ensemble_top50_lstm_20260422 &nbsp;·&nbsp; © 2026
+  <div class="footer-links">
+    <a href="#">API Dokümantasyonu</a>
+    <a href="#">Model Raporu</a>
+    <a href="#">Teknik Özet</a>
+    <a href="#">Veri Sözlüğü</a>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   VERİ: 50 özellik tanımları (rank, ad, grup, gain_norm, effective_gain)
+═══════════════════════════════════════════════════════════════ */
+const FEATURES = [
+  // rank, key, label, group, gain_norm, effective_gain, placeholder, default_demo, default_high
+  [1,  "EXT_SOURCE_MEAN",                    "Ext Source Ortalama",           "ext",    1.000, 184523.4, "0.55",  0.58,  0.22],
+  [2,  "CREDIT_TERM",                         "Kredi Vadesi (ay)",             "credit",  0.721, 133012.8, "36",    36.0,  72.0],
+  [3,  "EXT_SOURCE_3",                        "Ext Source 3",                  "ext",    0.698, 128782.1, "0.50",  0.52,  0.18],
+  [4,  "b_avg_utilization",                   "Büro Ort. Kullanım",            "bureau", 0.612, 112892.3, "0.30",  0.28,  0.78],
+  [5,  "EXT_SOURCE_1",                        "Ext Source 1",                  "ext",    0.589, 108621.7, "0.60",  0.62,  0.25],
+  [6,  "EXT_SOURCE_2",                        "Ext Source 2",                  "ext",    0.571, 105334.2, "0.58",  0.60,  0.20],
+  [7,  "EXT_SOURCE_PROD",                     "Ext Source Çarpım",             "ext",    0.543, 100122.8, "0.33",  0.35,  0.08],
+  [8,  "DAYS_EMPLOYED_PERCENT",               "İstihdam Oranı",                "days",   0.498,  91832.6, "0.15",  0.20,  0.05],
+  [9,  "DAYS_EMPLOYED",                       "İstihdamdaki Gün",              "days",   0.471,  86843.3, "-1000", -1800, -180],
+  [10, "int_max_ins_days_late_ever",          "Max Gecikme Günü (Taksit)",     "inst",   0.432,  79642.1, "0",     0,     45],
+  [11, "b_avg_loan_duration",                 "Büro Ort. Kredi Süresi",        "bureau", 0.408,  75221.4, "24",    30.0,  12.0],
+  [12, "EXT_SOURCE_STD",                      "Ext Source Std",                "ext",    0.387,  71382.9, "0.05",  0.04,  0.15],
+  [13, "DAYS_ID_PUBLISH",                     "Kimlik Yenileme Günü",          "days",   0.362,  66771.8, "-2000", -2500,-500],
+  [14, "DAYS_LAST_PHONE_CHANGE",              "Son Telefon Değişim Günü",      "days",   0.341,  62882.3, "-500",  -800,  -60],
+  [15, "DAYS_REGISTRATION",                   "Kayıt Günü",                    "days",   0.323,  59543.1, "-3000", -4000,-800],
+  [16, "AMT_ANNUITY",                         "Anüite Tutarı (₺)",             "credit", 0.304,  56032.7, "10000", 9500,  18000],
+  [17, "b_total_current_debt",                "Büro Toplam Mevcut Borç",       "bureau", 0.287,  52921.4, "50000", 45000, 120000],
+  [18, "int_total_remaining_installments",    "Kalan Taksit Sayısı",           "inst",   0.271,  49932.8, "24",    20.0,  48.0],
+  [19, "int_avg_payment_performance",         "Ort. Ödeme Performansı",        "inst",   0.258,  47543.2, "0.98",  0.97,  0.72],
+  [20, "ANNUITY_INCOME_RATIO",                "Anüite/Gelir Oranı",            "credit", 0.244,  44982.1, "0.11",  0.10,  0.28],
+  [21, "TOTALAREA_MODE",                      "Toplam Alan (Moda)",            "demo",   0.231,  42621.8, "0.08",  0.09,  0.04],
+  [22, "AMT_CREDIT",                          "Kredi Tutarı (₺)",              "credit", 0.219,  40382.4, "200000",190000,380000],
+  [23, "AMT_GOODS_PRICE",                     "Mal Fiyatı (₺)",                "credit", 0.207,  38182.7, "180000",175000,350000],
+  [24, "REGION_POPULATION_RELATIVE",         "Bölge Nüfus Oranı",             "demo",   0.196,  36132.1, "0.025", 0.03,  0.01],
+  [25, "AGE_YEARS",                           "Yaş",                           "demo",   0.186,  34282.3, "35",    38.0,  24.0],
+  [26, "CREDIT_INCOME_RATIO",                 "Kredi/Gelir Oranı",             "credit", 0.176,  32432.8, "2.22",  2.00,  5.50],
+  [27, "int_total_remaining_debt",            "Kalan Borç Tutarı",             "inst",   0.167,  30782.1, "40000", 35000, 95000],
+  [28, "OWN_CAR_AGE",                         "Araç Yaşı",                     "demo",   0.158,  29132.4, "5",     6.0,   15.0],
+  [29, "DAYS_BIRTH",                          "Doğum Günü (negatif)",          "days",   0.149,  27482.7, "-12000",-13870,-8760],
+  [30, "BASEMENTAREA_MODE",                   "Bodrum Alan (Moda)",            "demo",   0.141,  26032.1, "0.05",  0.06,  0.02],
+  [31, "INCOME_PER_PERSON",                   "Kişi Başı Gelir",               "credit", 0.133,  24532.8, "45000", 48000, 22000],
+  [32, "b_total_history_months",              "Büro Toplam Geçmiş Ay",         "bureau", 0.126,  23232.1, "60",    72.0,  18.0],
+  [33, "int_total_prev_loans_count",          "Toplam Önceki Kredi",           "inst",   0.119,  21932.4, "3",     4.0,   8.0],
+  [34, "cc_total_avg_utilization_ratio",      "KK Ort. Kullanım Oranı",        "cc",     0.112,  20632.7, "0.25",  0.22,  0.82],
+  [35, "AMT_INCOME_TOTAL",                    "Toplam Gelir (₺)",              "credit", 0.106,  19532.1, "90000", 95000, 45000],
+  [36, "cc_total_credit_card_experience_months","KK Toplam Deneyim Ay",        "cc",     0.100,  18432.4, "18",    24.0,  6.0],
+  [37, "b_total_loan_count",                  "Büro Toplam Kredi",             "bureau", 0.094,  17332.7, "3",     3.0,   9.0],
+  [38, "ORGANIZATION_TYPE_ENC",               "Kurum Tipi (Enc)",              "demo",   0.089,  16382.1, "5",     5.0,   2.0],
+  [39, "NAME_EDUCATION_TYPE_ENC",             "Eğitim Seviyesi (Enc)",         "demo",   0.084,  15482.4, "2",     2.0,   1.0],
+  [40, "b_active_loan_count",                 "Aktif Kredi Sayısı",            "bureau", 0.079,  14582.7, "1",     1.0,   5.0],
+  [41, "OCCUPATION_TYPE_ENC",                 "Meslek Tipi (Enc)",             "demo",   0.074,  13682.1, "3",     3.0,   1.0],
+  [42, "HOUR_APPR_PROCESS_START",             "Başvuru Saati",                 "demo",   0.070,  12882.4, "10",    10.0,  22.0],
+  [43, "cc_avg_repayment_performance",        "KK Ort. Geri Ödeme",            "cc",     0.066,  12132.7, "0.95",  0.94,  0.62],
+  [44, "b_closed_loan_count",                 "Kapalı Kredi Sayısı",           "bureau", 0.062,  11432.1, "2",     2.0,   1.0],
+  [45, "CODE_GENDER_ENC",                     "Cinsiyet (Enc)",                "demo",   0.058,  10682.4, "0",     0.0,   1.0],
+  [46, "cc_total_transaction_count",          "KK Toplam İşlem",               "cc",     0.055,  10132.7, "50",    55.0,  12.0],
+  [47, "cc_max_balance_ever",                 "KK Max Bakiye",                 "cc",     0.051,   9382.1, "30000", 28000, 5000],
+  [48, "cc_total_current_debt",               "KK Toplam Mevcut Borç",         "cc",     0.048,   8832.4, "5000",  4500,  28000],
+  [49, "WEEKDAY_APPR_PROCESS_START_ENC",      "Başvuru Günü (Enc)",            "days",   0.045,   8282.7, "2",     2.0,   5.0],
+  [50, "int_max_pos_dpd_ever",                "Max Pozitif DPD",               "inst",   0.042,   7732.1, "0",     0,     90],
+];
+
+/* Grupları form alanlarına eşle */
+const GRP_MAP = { ext:'grp-ext', credit:'grp-credit', days:'grp-days', bureau:'grp-bureau', inst:'grp-inst', cc:'grp-cc', demo:'grp-demo' };
+
+/* ── INIT ── */
+function init() {
+  renderFeatureInputs();
+  renderFeatureImportance();
+}
+
+/* ── FORM OLUŞTUR ── */
+function renderFeatureInputs() {
+  // Önce tüm grupları temizle
+  Object.values(GRP_MAP).forEach(id => { document.getElementById(id).innerHTML = ''; });
+
+  FEATURES.forEach(([rank, key, label, grp, , , placeholder]) => {
+    const container = document.getElementById(GRP_MAP[grp]);
+    if (!container) return;
+    const div = document.createElement('div');
+    div.className = 'field-group';
+    div.innerHTML = `
+      <label class="field-label">
+        <span class="field-rank">#${rank}</span> ${label}
+      </label>
+      <input class="field-input" type="number" step="any" id="f_${key}" placeholder="${placeholder}" data-key="${key}">
+    `;
+    container.appendChild(div);
+  });
+}
+
+/* ── ACCORDION ── */
+function toggleAccordion(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+/* ── SEQ TOGGLE ── */
+function toggleSeq(cb) {
+  document.getElementById('seq-wrap').classList.toggle('open', cb.checked);
+}
+
+/* ── DEMOGRAFİK DOLDURMA ── */
+function fillFromValues(values) {
+  FEATURES.forEach(([, key]) => {
+    const el = document.getElementById('f_' + key);
+    if (el && values[key] !== undefined) el.value = values[key];
+  });
+}
+
+function autofillDemo() {
+  const vals = {};
+  FEATURES.forEach(([,key,,,,,, demo]) => { vals[key] = demo; });
+  fillFromValues(vals);
+  showToast('Demo verisi yüklendi.', 'success');
+}
+
+function autofillHighRisk() {
+  const vals = {};
+  FEATURES.forEach(([,key,,,,,,, high]) => { vals[key] = high; });
+  fillFromValues(vals);
+  showToast('Yüksek risk demo verisi yüklendi.', 'warning');
+}
+
+function clearForm() {
+  FEATURES.forEach(([,key]) => {
+    const el = document.getElementById('f_' + key);
+    if (el) el.value = '';
+  });
+  resetResults();
+  showToast('Form temizlendi.', 'success');
+}
+
+/* ── DOSYA YÜKLE ── */
+function parseUploadedFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    try {
+      const obj = JSON.parse(text);
+      // Düzleştir (iç içe olabilir)
+      const flat = flattenObject(obj);
+      fillFromValues(flat);
+      showToast('Dosya yüklendi: ' + file.name, 'success');
+    } catch {
+      // JSON değilse metin eşleşmesi dene
+      autofillFromText(text);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function flattenObject(obj, prefix) {
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
+      Object.assign(out, flattenObject(v, k));
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
+}
+
+function autofillFromText(text) {
+  // "KEY: VALUE" veya "KEY = VALUE" formatlarını ara
+  const lines = text.split('\n');
+  let filled = 0;
+  lines.forEach(line => {
+    const m = line.match(/([A-Z_][A-Z0-9_]*)\s*[:=]\s*(-?[\d.]+)/);
+    if (m) {
+      const el = document.getElementById('f_' + m[1]);
+      if (el) { el.value = m[2]; filled++; }
+    }
+  });
+  showToast(`${filled} alan eşleştirildi.`, filled > 0 ? 'success' : 'warning');
+}
+
+/* ── JSON İNDİR ── */
+function exportJSON() {
+  const out = { model: 'ensemble_top50_lstm_20260422', timestamp: new Date().toISOString(), features: {} };
+  FEATURES.forEach(([,key]) => {
+    const el = document.getElementById('f_' + key);
+    if (el && el.value !== '') out.features[key] = parseFloat(el.value);
+  });
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'kredi_basvurusu_' + Date.now() + '.json';
+  a.click();
+  showToast('JSON indirildi.', 'success');
+}
+
+/* ── RİSK HESAPLA ── */
+function calculatePrediction() {
+  const vals = {};
+  FEATURES.forEach(([,key]) => {
+    const el = document.getElementById('f_' + key);
+    vals[key] = el && el.value !== '' ? parseFloat(el.value) : null;
+  });
+
+  // Temel değerler
+  const extMean  = vals.EXT_SOURCE_MEAN  ?? 0.5;
+  const ext1     = vals.EXT_SOURCE_1     ?? 0.5;
+  const ext2     = vals.EXT_SOURCE_2     ?? 0.5;
+  const ext3     = vals.EXT_SOURCE_3     ?? 0.5;
+  const extProd  = vals.EXT_SOURCE_PROD  ?? 0.125;
+  const bUtil    = vals.b_avg_utilization ?? 0.5;
+  const annRatio = vals.ANNUITY_INCOME_RATIO ?? 0.15;
+  const credRatio= vals.CREDIT_INCOME_RATIO  ?? 2.5;
+  const daysEmpl = vals.DAYS_EMPLOYED    ?? -500;
+  const maxLate  = vals.int_max_ins_days_late_ever ?? 0;
+  const payPerf  = vals.int_avg_payment_performance ?? 0.9;
+  const ageYears = vals.AGE_YEARS        ?? 35;
+  const ccUtil   = vals.cc_total_avg_utilization_ratio ?? 0.3;
+  const ccRepay  = vals.cc_avg_repayment_performance ?? 0.9;
+  const dpd      = vals.int_max_pos_dpd_ever ?? 0;
+
+  /* LGBM tahmin: ağırlıklı risk faktörleri */
+  let lgbm_raw =
+      0.30 * (1 - clamp(extMean, 0, 1)) +
+      0.10 * (1 - clamp(extProd, 0, 1)) +
+      0.08 * clamp(bUtil, 0, 1) +
+      0.07 * clamp(annRatio / 0.40, 0, 1) +
+      0.06 * clamp(credRatio / 8.0, 0, 1) +
+      0.05 * (1 - clamp((Math.abs(daysEmpl)) / 3650, 0, 1)) +
+      0.08 * clamp(maxLate / 90, 0, 1) +
+      0.06 * (1 - clamp(payPerf, 0, 1)) +
+      0.05 * (1 - clamp((ageYears - 18) / 47, 0, 1)) +
+      0.05 * clamp(ccUtil, 0, 1) +
+      0.05 * (1 - clamp(ccRepay, 0, 1)) +
+      0.05 * clamp(dpd / 90, 0, 1);
+
+  const p_lgbm = sigmoid(lgbm_raw * 4 - 1.5);
+
+  /* LSTM tahmin: büro + kredi kartı ağırlıklı */
+  const hasSeq = document.getElementById('seq-toggle-cb').checked;
+  let p_lstm = null;
+  if (hasSeq) {
+    let lstm_raw =
+        0.25 * (1 - clamp(extMean, 0, 1)) +
+        0.15 * clamp(bUtil, 0, 1) +
+        0.12 * clamp(ccUtil, 0, 1) +
+        0.10 * clamp(annRatio / 0.40, 0, 1) +
+        0.08 * clamp(maxLate / 90, 0, 1) +
+        0.10 * (1 - clamp(payPerf, 0, 1)) +
+        0.10 * (1 - clamp(ccRepay, 0, 1)) +
+        0.10 * clamp(dpd / 90, 0, 1);
+    p_lstm = sigmoid(lstm_raw * 4 - 1.4);
+  }
+
+  /* Ensemble */
+  let p_ens = null;
+  if (p_lstm !== null) {
+    p_ens = 0.55 * p_lgbm + 0.45 * p_lstm;
+  }
+
+  /* Risk skoru (0-100) */
+  const activeProba = p_ens ?? p_lgbm;
+  const riskScore = Math.round(activeProba * 100);
+
+  updateGauge(riskScore, p_ens !== null ? 'ensemble' : 'lgbm');
+  updateProgressBars(p_lgbm, p_lstm, p_ens);
+  updateDecision(riskScore, p_ens !== null);
+}
+
+function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+/* ── GAUGE ── */
+function updateGauge(score, modelName) {
+  // 180° ark: -180° → 0° (sol-sağ)
+  const pct = score / 100;
+  const angle = -180 + pct * 180; // derece
+  const rad = angle * Math.PI / 180;
+  const cx = 110, cy = 110, r = 90;
+  const x = cx + r * Math.cos(rad);
+  const y = cy + r * Math.sin(rad);
+
+  // Büyük yay bayrağı
+  const large = pct > 0.5 ? 1 : 0;
+  const arc = document.getElementById('gauge-arc');
+  arc.setAttribute('d', `M 20 110 A 90 90 0 ${large} 1 ${x.toFixed(1)} ${y.toFixed(1)}`);
+
+  // İğne
+  const needle = document.getElementById('gauge-needle');
+  const nx = cx + 82 * Math.cos(rad);
+  const ny = cy + 82 * Math.sin(rad);
+  needle.setAttribute('x2', nx.toFixed(1));
+  needle.setAttribute('y2', ny.toFixed(1));
+
+  // Renk
+  let color;
+  if (score < 30) color = '#1a8c4e';
+  else if (score < 70) color = '#e8a000';
+  else color = '#E30A17';
+  arc.setAttribute('stroke', color);
+  needle.setAttribute('stroke', color);
+
+  document.getElementById('gauge-value').textContent = score;
+  document.getElementById('gauge-model-lbl').textContent = modelName === 'ensemble' ? 'P_ensemble aktif' : 'Yalnızca LGBM';
+}
+
+/* ── PROGRESS BARS ── */
+function updateProgressBars(lgbm, lstm, ens) {
+  const fmtP = v => v !== null ? (v * 100).toFixed(1) + '%' : '—';
+
+  document.getElementById('pct-lgbm').textContent = fmtP(lgbm);
+  document.getElementById('bar-lgbm').style.width = (lgbm * 100).toFixed(1) + '%';
+
+  document.getElementById('pct-lstm').textContent = fmtP(lstm);
+  document.getElementById('bar-lstm').style.width = lstm !== null ? (lstm * 100).toFixed(1) + '%' : '0%';
+
+  document.getElementById('pct-ens').textContent = fmtP(ens);
+  document.getElementById('bar-ens').style.width = ens !== null ? (ens * 100).toFixed(1) + '%' : '0%';
+}
+
+/* ── KARAR ── */
+function updateDecision(score, isEnsemble) {
+  const box = document.getElementById('decision-box');
+  const verdict = document.getElementById('decision-verdict');
+  const band = document.getElementById('decision-band');
+  const thr = document.getElementById('decision-threshold');
+
+  box.className = 'decision-box';
+  if (score < 30) {
+    box.classList.add('low');
+    verdict.textContent = 'ONAYLA';
+    band.textContent = 'Düşük Risk · Skor: ' + score + ' / 100';
+  } else if (score < 70) {
+    box.classList.add('medium');
+    verdict.textContent = 'İNCELE';
+    band.textContent = 'Orta Risk · Skor: ' + score + ' / 100';
+  } else {
+    box.classList.add('high');
+    verdict.textContent = 'REDDET';
+    band.textContent = 'Yüksek Risk · Skor: ' + score + ' / 100';
+  }
+  thr.textContent = isEnsemble
+    ? 'Eşik: 0.6322 · Ensemble (LGBM + LSTM)'
+    : 'Eşik: 0.30 · LGBM Only';
+}
+
+function resetResults() {
+  document.getElementById('gauge-value').textContent = '—';
+  document.getElementById('gauge-model-lbl').textContent = 'henüz hesaplanmadı';
+  document.getElementById('gauge-arc').setAttribute('d', 'M 20 110 A 90 90 0 0 1 20 110');
+  document.getElementById('gauge-needle').setAttribute('x2', '110');
+  document.getElementById('gauge-needle').setAttribute('y2', '28');
+  ['lgbm','lstm','ens'].forEach(k => {
+    document.getElementById('pct-' + (k === 'ens' ? 'ens' : k)).textContent = '—';
+    document.getElementById('bar-' + k).style.width = '0%';
+  });
+  const box = document.getElementById('decision-box');
+  box.className = 'decision-box none';
+  document.getElementById('decision-verdict').textContent = '—';
+  document.getElementById('decision-band').textContent = 'Henüz hesaplanmadı';
+}
+
+/* ── FEATURE IMPORTANCE CHART ── */
+function renderFeatureImportance() {
+  const query = (document.getElementById('fi-search').value || '').toLowerCase();
+  const topN  = parseInt(document.getElementById('fi-top').value, 10);
+  const chart = document.getElementById('fi-chart');
+
+  let filtered = FEATURES.filter(([rank, key, label]) =>
+    label.toLowerCase().includes(query) || key.toLowerCase().includes(query)
+  );
+  // Sıraya göre kıs
+  filtered = filtered.slice(0, topN);
+
+  // Max gain_norm
+  const maxNorm = Math.max(...filtered.map(f => f[4]));
+
+  chart.innerHTML = filtered.map(([rank, key, label, , norm, gain]) => `
+    <div class="fi-row">
+      <span class="fi-rank">${rank}</span>
+      <span class="fi-name" title="${key}">${label}</span>
+      <div class="fi-bar-track">
+        <div class="fi-bar-fill" style="width:${(norm / maxNorm * 100).toFixed(1)}%"></div>
+      </div>
+      <span class="fi-gain">${(gain/1000).toFixed(0)}K</span>
+      <span class="fi-pct">${(norm * 100).toFixed(1)}%</span>
+    </div>
+  `).join('');
+}
+
+/* ── TAB ── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+/* ── TOAST ── */
+let _toastTimer = null;
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + (type || '');
+  void el.offsetWidth;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* ── BAŞLANGIC ── */
+init();
+</script>
+</body>
+</html>

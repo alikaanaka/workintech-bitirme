@@ -1,0 +1,32 @@
+models:
+  lgbm:
+    file: "lgbm_top50_cv5_threshold030_20260421.pkl"
+    holdout_auc: 0.8783
+  lstm:
+    file: "lstm_oof_cv5_20260422.pt"
+    holdout_auc: 0.8914
+  ensemble:
+    file: "ensemble_top50_lstm_20260422.pkl"
+    holdout_auc: 0.9114
+
+thresholds:
+  lgbm: 0.30
+  lstm: 0.6086
+  ensemble: 0.6322
+
+ensemble_weights:
+  lgbm: 0.55
+  lstm: 0.45
+
+risk_bands:
+  low_max: 30
+  medium_max: 70
+
+decisions:
+  approve_max: 30
+  review_max: 70
+
+api:
+  version: "20260422"
+  cors_origins:
+    - "*"

@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akbank - Güvenilir Bankacılık</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #E30A17;
+      --red-dark: #b5070f;
+      --gray-light: #f5f5f5;
+      --gray-mid: #e0e0e0;
+      --gray-text: #666;
+      --dark: #1a1a1a;
+      --white: #fff;
+      --font: 'Segoe UI', Arial, sans-serif;
+    }
+
+    body { font-family: var(--font); color: var(--dark); background: var(--white); }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ──────────────────────────────────────
+       1. TOP UTILITY BAR
+    ────────────────────────────────────── */
+    .top-bar {
+      background: #f0f0f0;
+      border-bottom: 1px solid var(--gray-mid);
+      font-size: 12px;
+      color: var(--gray-text);
+    }
+    .top-bar-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 6px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .top-bar-left { display: flex; gap: 20px; }
+    .top-bar-left a:hover { color: var(--red); }
+    .top-bar-right { display: flex; gap: 16px; align-items: center; }
+    .top-bar-right a:hover { color: var(--red); }
+    .top-bar-right .lang-btn {
+      border: 1px solid #ccc;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .top-bar-right .lang-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* ──────────────────────────────────────
+       2. MAIN NAVBAR
+    ────────────────────────────────────── */
+    .navbar {
+      background: var(--white);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .navbar-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: stretch;
+      height: 64px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-right: 36px;
+    }
+    .logo-mark {
+      width: 110px;
+      height: 36px;
+      background: var(--red);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      flex: 1;
+    }
+    .nav-links li {
+      position: relative;
+    }
+    .nav-links li > a {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark);
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .nav-links li > a:hover,
+    .nav-links li > a.active {
+      color: var(--red);
+      border-bottom-color: var(--red);
+    }
+    .nav-links li:hover .dropdown { display: block; }
+
+    /* Dropdown */
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--white);
+      border-top: 3px solid var(--red);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      min-width: 220px;
+      z-index: 200;
+      border-radius: 0 0 4px 4px;
+    }
+    .dropdown a {
+      display: block;
+      padding: 11px 20px;
+      font-size: 13px;
+      color: var(--dark);
+      border-bottom: 1px solid #f0f0f0;
+      transition: background .15s, color .15s;
+    }
+    .dropdown a:last-child { border-bottom: none; }
+    .dropdown a:hover { background: #fdf0f0; color: var(--red); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+    .btn-login {
+      background: var(--red);
+      color: var(--white);
+      padding: 9px 22px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-login:hover { background: var(--red-dark); }
+    .btn-search {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--gray-text);
+      padding: 6px;
+    }
+    .btn-search:hover { color: var(--red); }
+
+    /* ──────────────────────────────────────
+       3. HERO SLIDER
+    ────────────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 480px;
+      overflow: hidden;
+      background: #1a1a2e;
+    }
+    .hero-slides { display: flex; height: 100%; width: 300%; transition: transform .6s ease; }
+    .hero-slides.slide-1 { transform: translateX(0); }
+    .hero-slides.slide-2 { transform: translateX(-33.333%); }
+    .hero-slides.slide-3 { transform: translateX(-66.666%); }
+
+    .slide {
+      width: 33.333%;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .slide-1-bg { background: linear-gradient(110deg, #b5070f 0%, #E30A17 40%, #ff5f6d 100%); }
+    .slide-2-bg { background: linear-gradient(110deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+    .slide-3-bg { background: linear-gradient(110deg, #0f3460 0%, #533483 100%); }
+
+    .slide-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 80px;
+      color: var(--white);
+      width: 100%;
+    }
+    .slide-tag {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: .75;
+      margin-bottom: 14px;
+    }
+    .slide-title {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      max-width: 520px;
+    }
+    .slide-sub {
+      font-size: 16px;
+      opacity: .85;
+      margin-bottom: 28px;
+      max-width: 440px;
+      line-height: 1.6;
+    }
+    .btn-slide {
+      background: var(--white);
+      color: var(--red);
+      padding: 12px 28px;
+      border-radius: 5px;
+      font-weight: 700;
+      font-size: 14px;
+      display: inline-block;
+      transition: transform .2s;
+    }
+    .btn-slide:hover { transform: translateY(-2px); }
+    .btn-slide-outline {
+      background: transparent;
+      color: var(--white);
+      border: 2px solid var(--white);
+      padding: 10px 24px;
+      border-radius: 5px;
+      font-weight: 700;
+      font-size: 14px;
+      display: inline-block;
+      margin-left: 12px;
+      transition: background .2s;
+    }
+    .btn-slide-outline:hover { background: rgba(255,255,255,0.12); }
+
+    .slide-graphic {
+      position: absolute;
+      right: 8%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 320px;
+      height: 280px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--white);
+    }
+    .slide-graphic .graphic-icon { font-size: 56px; }
+    .slide-graphic .graphic-label { font-size: 14px; opacity: .8; text-align: center; }
+    .slide-graphic .graphic-value { font-size: 28px; font-weight: 800; }
+
+    .hero-arrows {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 16px;
+      pointer-events: none;
+    }
+    .arrow-btn {
+      pointer-events: all;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: var(--white);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .arrow-btn:hover { background: rgba(255,255,255,0.3); }
+
+    .hero-dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      cursor: pointer;
+      border: none;
+      transition: background .2s;
+    }
+    .dot.active { background: var(--white); width: 24px; border-radius: 4px; }
+
+    /* ──────────────────────────────────────
+       4. QUICK SERVICES
+    ────────────────────────────────────── */
+    .quick-services {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-mid);
+    }
+    .quick-services-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+    }
+    .qs-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 8px;
+      gap: 8px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: border-color .2s, color .2s;
+      text-align: center;
+    }
+    .qs-item:hover { border-bottom-color: var(--red); color: var(--red); }
+    .qs-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: #fdf0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      transition: background .2s;
+    }
+    .qs-item:hover .qs-icon { background: #fdd; }
+    .qs-label { font-size: 12px; font-weight: 600; color: var(--dark); line-height: 1.3; }
+    .qs-item:hover .qs-label { color: var(--red); }
+
+    /* ──────────────────────────────────────
+       5. CAMPAIGN CARDS
+    ────────────────────────────────────── */
+    .section { padding: 52px 0; }
+    .section-inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .section-title { font-size: 24px; font-weight: 800; }
+    .section-title span { color: var(--red); }
+    .see-all {
+      font-size: 13px;
+      color: var(--red);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .see-all:hover { text-decoration: underline; }
+
+    .cards-scroll {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      background: var(--white);
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.14); }
+    .card-img {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+    }
+    .card-img.red { background: linear-gradient(135deg, #E30A17, #ff6b6b); }
+    .card-img.blue { background: linear-gradient(135deg, #1a78c2, #56ccf2); }
+    .card-img.green { background: linear-gradient(135deg, #27ae60, #6fcf97); }
+    .card-img.purple { background: linear-gradient(135deg, #6c3483, #a29bfe); }
+    .card-body { padding: 18px; }
+    .card-tag {
+      font-size: 11px;
+      color: var(--red);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+    .card-desc { font-size: 13px; color: var(--gray-text); line-height: 1.5; margin-bottom: 14px; }
+    .card-cta {
+      font-size: 13px;
+      color: var(--red);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ──────────────────────────────────────
+       6. LOAN / PRODUCT TABS
+    ────────────────────────────────────── */
+    .products-section { background: var(--gray-light); padding: 52px 0; }
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 28px;
+      border-bottom: 2px solid var(--gray-mid);
+    }
+    .tab-btn {
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--gray-text);
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color .2s, border-color .2s;
+    }
+    .tab-btn.active { color: var(--red); border-bottom-color: var(--red); }
+    .tab-btn:hover:not(.active) { color: var(--dark); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+    .product-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+    }
+    .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .product-icon {
+      width: 52px; height: 52px;
+      flex-shrink: 0;
+      border-radius: 14px;
+      background: #fdf0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+    .product-info { flex: 1; }
+    .product-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .product-desc { font-size: 13px; color: var(--gray-text); line-height: 1.5; margin-bottom: 12px; }
+    .product-link { font-size: 13px; color: var(--red); font-weight: 700; }
+
+    /* ──────────────────────────────────────
+       7. DIGITAL BANKING BANNER
+    ────────────────────────────────────── */
+    .app-banner {
+      background: linear-gradient(120deg, #1a1a2e 0%, #E30A17 100%);
+      padding: 64px 0;
+      color: var(--white);
+    }
+    .app-banner-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 60px;
+    }
+    .app-text { flex: 1; }
+    .app-tag {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: .7;
+      margin-bottom: 14px;
+    }
+    .app-title { font-size: 36px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .app-desc { font-size: 15px; opacity: .85; line-height: 1.6; margin-bottom: 28px; max-width: 480px; }
+    .app-badges { display: flex; gap: 14px; }
+    .app-badge {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .app-badge:hover { background: rgba(255,255,255,0.22); }
+    .app-badge-icon { font-size: 24px; }
+    .app-mockup {
+      width: 260px;
+      height: 320px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--white);
+    }
+    .app-mockup-icon { font-size: 64px; }
+    .app-mockup-label { font-size: 14px; opacity: .75; }
+
+    /* ──────────────────────────────────────
+       8. TOOLS / CALCULATORS
+    ────────────────────────────────────── */
+    .tools-section { padding: 52px 0; background: var(--white); }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    .tool-card {
+      border: 1px solid var(--gray-mid);
+      border-radius: 12px;
+      padding: 28px;
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+    }
+    .tool-left { flex: 1; }
+    .tool-icon-wrap {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: #fdf0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+    .tool-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .tool-desc { font-size: 13px; color: var(--gray-text); line-height: 1.5; margin-bottom: 16px; }
+    .tool-inputs { display: flex; flex-direction: column; gap: 10px; }
+    .tool-input {
+      border: 1px solid var(--gray-mid);
+      border-radius: 6px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-family: var(--font);
+      color: var(--dark);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .tool-input:focus { border-color: var(--red); }
+    .tool-btn {
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background .2s;
+    }
+    .tool-btn:hover { background: var(--red-dark); }
+    .tool-divider { width: 1px; background: var(--gray-mid); }
+    .tool-right {
+      width: 160px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .tool-result-label { font-size: 12px; color: var(--gray-text); }
+    .tool-result-value { font-size: 26px; font-weight: 800; color: var(--red); }
+    .tool-result-sub { font-size: 12px; color: var(--gray-text); }
+
+    /* Exchange rates */
+    .exchange-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .ex-item {
+      border: 1px solid var(--gray-mid);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .ex-flag { font-size: 28px; margin-bottom: 6px; }
+    .ex-code { font-size: 12px; color: var(--gray-text); margin-bottom: 4px; }
+    .ex-buy { font-size: 15px; font-weight: 700; }
+    .ex-sell { font-size: 12px; color: var(--gray-text); }
+    .ex-change { font-size: 11px; margin-top: 4px; }
+    .up { color: #27ae60; }
+    .down { color: var(--red); }
+
+    /* ──────────────────────────────────────
+       9. NEWS / PRESS
+    ────────────────────────────────────── */
+    .news-section { background: var(--gray-light); padding: 52px 0; }
+    .news-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 24px; }
+    .news-main {
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--white);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+      cursor: pointer;
+      transition: transform .2s;
+    }
+    .news-main:hover { transform: translateY(-3px); }
+    .news-main-img {
+      height: 220px;
+      background: linear-gradient(135deg, #E30A17, #ff9a9e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+    }
+    .news-main-body { padding: 20px; }
+    .news-date { font-size: 11px; color: var(--gray-text); margin-bottom: 8px; }
+    .news-title-main { font-size: 18px; font-weight: 700; line-height: 1.4; margin-bottom: 10px; }
+    .news-excerpt { font-size: 13px; color: var(--gray-text); line-height: 1.6; }
+
+    .news-side { display: flex; flex-direction: column; gap: 14px; }
+    .news-item {
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      gap: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: transform .2s;
+    }
+    .news-item:hover { transform: translateY(-2px); }
+    .news-item-img {
+      width: 90px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    .news-item-img.c1 { background: linear-gradient(135deg, #1a78c2, #56ccf2); }
+    .news-item-img.c2 { background: linear-gradient(135deg, #27ae60, #6fcf97); }
+    .news-item-img.c3 { background: linear-gradient(135deg, #6c3483, #a29bfe); }
+    .news-item-img.c4 { background: linear-gradient(135deg, #e67e22, #f9ca24); }
+    .news-item-body { padding: 12px 14px; }
+    .news-item-date { font-size: 11px; color: var(--gray-text); margin-bottom: 6px; }
+    .news-item-title { font-size: 13px; font-weight: 700; line-height: 1.4; }
+
+    /* ──────────────────────────────────────
+       10. FOOTER
+    ────────────────────────────────────── */
+    .footer { background: #1a1a1a; color: #ccc; padding: 56px 0 0; }
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid #333;
+    }
+    .footer-brand { }
+    .footer-logo {
+      width: 100px;
+      height: 32px;
+      background: var(--red);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .footer-tagline { font-size: 14px; color: #aaa; line-height: 1.6; margin-bottom: 20px; }
+    .footer-socials { display: flex; gap: 10px; }
+    .social-btn {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .social-btn:hover { background: var(--red); }
+
+    .footer-col h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a {
+      font-size: 13px;
+      color: #aaa;
+      transition: color .2s;
+    }
+    .footer-col ul li a:hover { color: var(--white); }
+
+    .footer-bottom {
+      padding: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #666;
+    }
+    .footer-bottom-links { display: flex; gap: 20px; }
+    .footer-bottom-links a { color: #666; }
+    .footer-bottom-links a:hover { color: #aaa; }
+
+    /* ──────────────────────────────────────
+       RESPONSIVE (basic)
+    ────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .cards-scroll { grid-template-columns: repeat(2, 1fr); }
+      .tab-content.active { grid-template-columns: repeat(2, 1fr); }
+      .news-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .quick-services-inner { grid-template-columns: repeat(4, 1fr); }
+      .exchange-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .top-bar-left { display: none; }
+      .nav-links { display: none; }
+      .hero { height: 320px; }
+      .slide-title { font-size: 28px; }
+      .slide-graphic { display: none; }
+      .quick-services-inner { grid-template-columns: repeat(4, 1fr); }
+      .cards-scroll { grid-template-columns: 1fr; }
+      .tools-grid { grid-template-columns: 1fr; }
+      .app-banner-inner { flex-direction: column; }
+      .app-mockup { display: none; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── 1. TOP UTILITY BAR ── -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="top-bar-left">
+      <a href="#">Kurumsal</a>
+      <a href="#">Yatırımcı İlişkileri</a>
+      <a href="#">Basın Odası</a>
+      <a href="#">Kariyer</a>
+      <a href="#">Sürdürülebilirlik</a>
+    </div>
+    <div class="top-bar-right">
+      <a href="#">Şube &amp; ATM</a>
+      <a href="#">İletişim</a>
+      <a href="#">Yardım</a>
+      <span class="lang-btn">TR | EN</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 2. MAIN NAVBAR ── -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <div class="logo">
+      <div class="logo-mark">akbank</div>
+    </div>
+    <ul class="nav-links">
+      <li>
+        <a href="#">Bireysel</a>
+        <div class="dropdown">
+          <a href="#">Hesaplar</a>
+          <a href="#">Kredi Kartları</a>
+          <a href="#">Krediler</a>
+          <a href="#">Yatırım</a>
+          <a href="#">Sigorta</a>
+          <a href="#">Emeklilik</a>
+        </div>
+      </li>
+      <li>
+        <a href="#">KOBİ</a>
+        <div class="dropdown">
+          <a href="#">Ticari Hesaplar</a>
+          <a href="#">İşletme Kredileri</a>
+          <a href="#">POS &amp; Tahsilat</a>
+          <a href="#">Dış Ticaret</a>
+        </div>
+      </li>
+      <li>
+        <a href="#">Ticari &amp; Kurumsal</a>
+        <div class="dropdown">
+          <a href="#">Kurumsal Finansman</a>
+          <a href="#">Nakit Yönetimi</a>
+          <a href="#">Hazine</a>
+          <a href="#">Proje Finansmanı</a>
+        </div>
+      </li>
+      <li>
+        <a href="#">Özel Bankacılık</a>
+        <div class="dropdown">
+          <a href="#">Portföy Yönetimi</a>
+          <a href="#">Yatırım Danışmanlığı</a>
+          <a href="#">Ayrıcalıklı Hizmetler</a>
+        </div>
+      </li>
+      <li><a href="#">Kampanyalar</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-search" title="Ara">🔍</button>
+      <button class="btn-login">İnternet Bankacılığı</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── 3. HERO SLIDER ── -->
+<section class="hero">
+  <div class="hero-slides" id="heroSlides">
+    <!-- Slide 1 -->
+    <div class="slide slide-1-bg">
+      <div class="slide-content">
+        <div class="slide-tag">Özel Teklif</div>
+        <div class="slide-title">İhtiyaç Kredisinde<br>En Uygun Faiz</div>
+        <div class="slide-sub">100.000 TL'ye kadar düşük faizli ihtiyaç kredisi fırsatını kaçırma.</div>
+        <a href="#" class="btn-slide">Hemen Başvur</a>
+        <a href="#" class="btn-slide-outline">Detaylı Bilgi</a>
+      </div>
+      <div class="slide-graphic">
+        <div class="graphic-icon">💳</div>
+        <div class="graphic-label">Aylık Faiz Oranı</div>
+        <div class="graphic-value">%3.49</div>
+      </div>
+    </div>
+    <!-- Slide 2 -->
+    <div class="slide slide-2-bg">
+      <div class="slide-content">
+        <div class="slide-tag">Dijital Bankacılık</div>
+        <div class="slide-title">Akbank Mobil ile<br>Her Şey Parmaklarında</div>
+        <div class="slide-sub">7/24 kesintisiz hizmet, anlık bildirimler ve güvenli işlemler.</div>
+        <a href="https://home-credit-app-433518789604.europe-west1.run.app/" class="btn-slide">Uygulamayı İndir</a>
+        <a href="#" class="btn-slide-outline">Keşfet</a>
+      </div>
+      <div class="slide-graphic">
+        <div class="graphic-icon">📱</div>
+        <div class="graphic-label">Aktif Kullanıcı</div>
+        <div class="graphic-value">12M+</div>
+      </div>
+    </div>
+    <!-- Slide 3 -->
+    <div class="slide slide-3-bg">
+      <div class="slide-content">
+        <div class="slide-tag">Yatırım</div>
+        <div class="slide-title">Paranızı Değerlendirin,<br>Geleceğinizi Kurun</div>
+        <div class="slide-sub">Hisse, fon, altın ve daha fazlası tek platformda. Yatırıma hemen başlayın.</div>
+        <a href="#" class="btn-slide">Yatırım Yap</a>
+        <a href="#" class="btn-slide-outline">Fon Sepeti</a>
+      </div>
+      <div class="slide-graphic">
+        <div class="graphic-icon">📈</div>
+        <div class="graphic-label">Günlük İşlem Hacmi</div>
+        <div class="graphic-value">₺5B+</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-arrows">
+    <button class="arrow-btn" onclick="changeSlide(-1)">&#8249;</button>
+    <button class="arrow-btn" onclick="changeSlide(1)">&#8250;</button>
+  </div>
+  <div class="hero-dots">
+    <button class="dot active" onclick="goSlide(0)" id="dot0"></button>
+    <button class="dot" onclick="goSlide(1)" id="dot1"></button>
+    <button class="dot" onclick="goSlide(2)" id="dot2"></button>
+  </div>
+</section>
+
+<!-- ── 4. QUICK SERVICES ── -->
+<div class="quick-services">
+  <div class="quick-services-inner">
+    <div class="qs-item">
+      <div class="qs-icon">💳</div>
+      <div class="qs-label">Kredi Kartı Başvurusu</div>
+    </div>
+    <div class="qs-item">
+      <div class="qs-icon">🏠</div>
+      <div class="qs-label">Konut Kredisi</div>
+    </div>
+    <div class="qs-item">
+      <div class="qs-icon">🚗</div>
+      <div class="qs-label">Taşıt Kredisi</div>
+    </div>
+    <div class="qs-item">
+      <div class="qs-icon">💰</div>
+      <div class="qs-label">İhtiyaç Kredisi</div>
+    </div>
+    <div class="qs-item">
+      <div class="qs-icon">📊</div>
+      <div class="qs-label">Yatırım İşlemleri</div>
+    </div>
+    <div class="qs-item">
+      <div class="qs-icon">🌍</div>
+      <div class="qs-label">Döviz Al / Sat</div>
+    </div>
+    <div class="qs-item">
+      <div class="qs-icon">🛡️</div>
+      <div class="qs-label">Sigorta</div>
+    </div>
+    <div class="qs-item">
+      <div class="qs-icon">🏧</div>
+      <div class="qs-label">Şube &amp; ATM Bul</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 5. CAMPAIGN CARDS ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 class="section-title">Güncel <span>Kampanyalar</span></h2>
+      <a href="#" class="see-all">Tüm Kampanyalar →</a>
+    </div>
+    <div class="cards-scroll">
+      <div class="card">
+        <div class="card-img red">🎁</div>
+        <div class="card-body">
+          <div class="card-tag">Kredi Kartı</div>
+          <div class="card-title">Axess ile Her Alışverişte Puan Kazan</div>
+          <div class="card-desc">Anlaşmalı iş yerlerinde 4 kat puan, restoranlarda %10 indirim fırsatı.</div>
+          <div class="card-cta">Hemen Başvur →</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-img blue">🏠</div>
+        <div class="card-body">
+          <div class="card-tag">Konut Kredisi</div>
+          <div class="card-title">0 Masraflı Konut Kredisi Fırsatı</div>
+          <div class="card-desc">Dosya masrafı olmadan, 240 aya kadar vade seçeneğiyle ev sahibi olun.</div>
+          <div class="card-cta">Hesapla →</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-img green">💹</div>
+        <div class="card-body">
+          <div class="card-tag">Yatırım</div>
+          <div class="card-title">Altın Hesabında Yüksek Getiri</div>
+          <div class="card-desc">Gram altın alımlarında işlem masrafı yok. Birikimlerinizi değerlendirin.</div>
+          <div class="card-cta">Yatırım Yap →</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-img purple">🛡️</div>
+        <div class="card-body">
+          <div class="card-tag">Sigorta</div>
+          <div class="card-title">Kasko &amp; Trafik Sigortasında Özel Fiyat</div>
+          <div class="card-desc">Online başvuruda %20'ye varan indirim ve anında poliçe düzenleme.</div>
+          <div class="card-cta">Teklif Al →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 6. PRODUCT TABS ── -->
+<section class="products-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 class="section-title">Ürün &amp; <span>Hizmetler</span></h2>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'bireysel')">Bireysel</button>
+      <button class="tab-btn" onclick="switchTab(this,'kobi')">KOBİ</button>
+      <button class="tab-btn" onclick="switchTab(this,'ticari')">Ticari &amp; Kurumsal</button>
+      <button class="tab-btn" onclick="switchTab(this,'ozel')">Özel Bankacılık</button>
+    </div>
+
+    <div class="tab-content active" id="tab-bireysel">
+      <div class="product-card">
+        <div class="product-icon">💳</div>
+        <div class="product-info">
+          <div class="product-name">Axess Kredi Kartı</div>
+          <div class="product-desc">Alışverişlerinizde puan kazanın, taksit imkânlarından faydalanın.</div>
+          <a href="#" class="product-link">Başvur →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">🏠</div>
+        <div class="product-info">
+          <div class="product-name">Konut Kredisi</div>
+          <div class="product-desc">240 aya kadar vade, uygun faiz oranlarıyla hayalinizdeki ev.</div>
+          <a href="#" class="product-link">Hesapla →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">📈</div>
+        <div class="product-info">
+          <div class="product-name">Yatırım Hesabı</div>
+          <div class="product-desc">Hisse senedi, fon, tahvil ve dövizde komisyonsuz işlem yapın.</div>
+          <a href="#" class="product-link">Keşfet →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">🛡️</div>
+        <div class="product-info">
+          <div class="product-name">Hayat Sigortası</div>
+          <div class="product-desc">Siz ve sevdikleriniz için güvence altında olmak artık çok kolay.</div>
+          <a href="#" class="product-link">Teklif Al →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">🏦</div>
+        <div class="product-info">
+          <div class="product-name">Mevduat Hesabı</div>
+          <div class="product-desc">Vadeli ya da vadesiz, TL veya dövizde birikimlerinizi değerlendirin.</div>
+          <a href="#" class="product-link">Aç →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">🚗</div>
+        <div class="product-info">
+          <div class="product-name">Taşıt Kredisi</div>
+          <div class="product-desc">Sıfır ya da ikinci el aracınız için uygun faizli finansman çözümü.</div>
+          <a href="#" class="product-link">Başvur →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-kobi">
+      <div class="product-card">
+        <div class="product-icon">🏢</div>
+        <div class="product-info">
+          <div class="product-name">İşletme Hesabı</div>
+          <div class="product-desc">İşletmenize özel avantajlı hesap paketleri ve ticari çözümler.</div>
+          <a href="#" class="product-link">Aç →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">💼</div>
+        <div class="product-info">
+          <div class="product-name">KOBİ Kredisi</div>
+          <div class="product-desc">İşletmenizin büyümesi için hızlı ve esnek kredi çözümleri.</div>
+          <a href="#" class="product-link">Başvur →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">🖥️</div>
+        <div class="product-info">
+          <div class="product-name">POS Cihazı</div>
+          <div class="product-desc">Fiziksel ve sanal POS çözümleriyle tahsilatlarınızı kolaylaştırın.</div>
+          <a href="#" class="product-link">Talep Et →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-ticari">
+      <div class="product-card">
+        <div class="product-icon">🌐</div>
+        <div class="product-info">
+          <div class="product-name">Dış Ticaret Finansmanı</div>
+          <div class="product-desc">İhracat ve ithalat işlemleriniz için kapsamlı finansal çözümler.</div>
+          <a href="#" class="product-link">İncele →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">💹</div>
+        <div class="product-info">
+          <div class="product-name">Hazine Ürünleri</div>
+          <div class="product-desc">Döviz, faiz riski yönetimi için türev ürünler ve yapılandırılmış çözümler.</div>
+          <a href="#" class="product-link">Detay →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">🏗️</div>
+        <div class="product-info">
+          <div class="product-name">Proje Finansmanı</div>
+          <div class="product-desc">Büyük ölçekli projeleriniz için uzman finansman danışmanlığı.</div>
+          <a href="#" class="product-link">İletişim →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-ozel">
+      <div class="product-card">
+        <div class="product-icon">💎</div>
+        <div class="product-info">
+          <div class="product-name">Özel Portföy Yönetimi</div>
+          <div class="product-desc">Kişisel yatırım stratejileri ve profesyonel portföy yönetim hizmeti.</div>
+          <a href="#" class="product-link">İncele →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">🌟</div>
+        <div class="product-info">
+          <div class="product-name">Ayrıcalıklı Kart</div>
+          <div class="product-desc">Dünyaca tanınan ayrıcalıklar ve sınırsız lounge erişimi.</div>
+          <a href="#" class="product-link">Keşfet →</a>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon">🏛️</div>
+        <div class="product-info">
+          <div class="product-name">Servet Yönetimi</div>
+          <div class="product-desc">Varlıklarınızı büyütmek ve korumak için kişiselleştirilmiş danışmanlık.</div>
+          <a href="#" class="product-link">Randevu Al →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 7. DIGITAL / APP BANNER ── -->
+<section class="app-banner">
+  <div class="app-banner-inner">
+    <div class="app-text">
+      <div class="app-tag">Dijital Bankacılık</div>
+      <div class="app-title">Bankacılığın Yeni<br>Adresi: Akbank Mobil</div>
+      <div class="app-desc">
+        12 milyon kullanıcının tercihi Akbank Mobil ile para transferi, yatırım,
+        kredi başvurusu ve çok daha fazlası tek ekranda. Hızlı, güvenli, kesintisiz.
+      </div>
+      <div class="app-badges">
+        <div class="app-badge">
+          <span class="app-badge-icon">🍎</span>
+          <div>
+            <div style="font-size:10px;opacity:.7">App Store'dan İndir</div>
+            <div>App Store</div>
+          </div>
+        </div>
+        <div class="app-badge">
+          <span class="app-badge-icon">▶️</span>
+          <div>
+            <div style="font-size:10px;opacity:.7">Google Play'den İndir</div>
+            <div>Google Play</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="app-mockup">
+      <div class="app-mockup-icon">📱</div>
+      <div class="app-mockup-label">Akbank Mobil</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 8. TOOLS / CALCULATORS ── -->
+<section class="tools-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 class="section-title">Finansal <span>Araçlar</span></h2>
+    </div>
+    <div class="tools-grid">
+      <!-- Kredi Hesaplama -->
+      <div class="tool-card">
+        <div class="tool-left">
+          <div class="tool-icon-wrap">🏦</div>
+          <div class="tool-title">Kredi Hesaplama</div>
+          <div class="tool-desc">Kredi tutarı ve vadesini girerek aylık taksitinizi anında öğrenin.</div>
+          <div class="tool-inputs">
+            <input class="tool-input" type="number" placeholder="Kredi Tutarı (₺)" id="loanAmount" oninput="calcLoan()">
+            <input class="tool-input" type="number" placeholder="Vade (Ay)" id="loanTerm" oninput="calcLoan()">
+            <input class="tool-input" type="number" placeholder="Faiz Oranı (%)" id="loanRate" value="3.49" oninput="calcLoan()">
+            <button class="tool-btn" onclick="calcLoan()">Hesapla</button>
+          </div>
+        </div>
+        <div class="tool-divider"></div>
+        <div class="tool-right">
+          <div class="tool-result-label">Aylık Taksit</div>
+          <div class="tool-result-value" id="loanResult">—</div>
+          <div class="tool-result-sub">₺</div>
+        </div>
+      </div>
+
+      <!-- Altın Hesaplama -->
+      <div class="tool-card">
+        <div class="tool-left">
+          <div class="tool-icon-wrap">🥇</div>
+          <div class="tool-title">Altın Hesaplama</div>
+          <div class="tool-desc">Gram ya da ons cinsinden altının TL karşılığını hesaplayın.</div>
+          <div class="tool-inputs">
+            <input class="tool-input" type="number" placeholder="Miktar (gram)" id="goldAmount" oninput="calcGold()">
+            <select class="tool-input" id="goldType" onchange="calcGold()">
+              <option value="gram">Gram Altın</option>
+              <option value="ceyrek">Çeyrek Altın</option>
+              <option value="yarim">Yarım Altın</option>
+              <option value="tam">Tam Altın</option>
+            </select>
+            <button class="tool-btn" onclick="calcGold()">Hesapla</button>
+          </div>
+        </div>
+        <div class="tool-divider"></div>
+        <div class="tool-right">
+          <div class="tool-result-label">Tahmini Değer</div>
+          <div class="tool-result-value" id="goldResult">—</div>
+          <div class="tool-result-sub">₺</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Döviz Kurları -->
+    <div style="margin-top:36px;">
+      <div class="section-header" style="margin-bottom:18px;">
+        <h3 class="section-title" style="font-size:20px;">Döviz <span>Kurları</span></h3>
+        <span style="font-size:12px;color:#999;">Anlık kur bilgisi için internet bankacılığına giriş yapın</span>
+      </div>
+      <div class="exchange-grid">
+        <div class="ex-item">
+          <div class="ex-flag">🇺🇸</div>
+          <div class="ex-code">USD / TRY</div>
+          <div class="ex-buy">32.48</div>
+          <div class="ex-sell">Satış: 32.61</div>
+          <div class="ex-change up">▲ %0.24</div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-flag">🇪🇺</div>
+          <div class="ex-code">EUR / TRY</div>
+          <div class="ex-buy">35.12</div>
+          <div class="ex-sell">Satış: 35.28</div>
+          <div class="ex-change down">▼ %0.11</div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-flag">🇬🇧</div>
+          <div class="ex-code">GBP / TRY</div>
+          <div class="ex-buy">41.05</div>
+          <div class="ex-sell">Satış: 41.22</div>
+          <div class="ex-change up">▲ %0.18</div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-flag">🥇</div>
+          <div class="ex-code">Gram Altın</div>
+          <div class="ex-buy">2.184</div>
+          <div class="ex-sell">Satış: 2.198</div>
+          <div class="ex-change up">▲ %0.62</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 9. NEWS / PRESS ── -->
+<section class="news-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 class="section-title">Haberler &amp; <span>Duyurular</span></h2>
+      <a href="#" class="see-all">Tüm Haberler →</a>
+    </div>
+    <div class="news-grid">
+      <div class="news-main">
+        <div class="news-main-img">📰</div>
+        <div class="news-main-body">
+          <div class="news-date">22 Nisan 2026</div>
+          <div class="news-title-main">Akbank, Sürdürülebilir Finans Alanında Yeni Bir Rekor Kırdı</div>
+          <div class="news-excerpt">Akbank, 2026 yılının ilk çeyreğinde sürdürülebilir finansman hacmini bir önceki yıla göre yüzde 40 artırarak sektörde öncü konumunu pekiştirdi.</div>
+        </div>
+      </div>
+      <div class="news-side">
+        <div class="news-item">
+          <div class="news-item-img c1">🏆</div>
+          <div class="news-item-body">
+            <div class="news-item-date">18 Nisan 2026</div>
+            <div class="news-item-title">En İyi Dijital Banka Ödülü Akbank'ın</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-item-img c2">🌱</div>
+          <div class="news-item-body">
+            <div class="news-item-date">14 Nisan 2026</div>
+            <div class="news-item-title">Yeşil Tahvil İhracında 500 Milyon Dolar</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-item-img c3">🤝</div>
+          <div class="news-item-body">
+            <div class="news-item-date">8 Nisan 2026</div>
+            <div class="news-item-title">Akbank-EBRD İş Birliği Protokolü İmzalandı</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-item-img c4">📊</div>
+          <div class="news-item-body">
+            <div class="news-item-date">3 Nisan 2026</div>
+            <div class="news-item-title">2026 Q1 Finansal Sonuçları Açıklandı</div>
+          </div>
+        </div>
+      </div>
+      <div class="news-side">
+        <div class="news-item">
+          <div class="news-item-img c3">🎓</div>
+          <div class="news-item-body">
+            <div class="news-item-date">28 Mart 2026</div>
+            <div class="news-item-title">Akbank Fintech Ödüllerinde 3 Kategori Kazandı</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-item-img c1">🌍</div>
+          <div class="news-item-body">
+            <div class="news-item-date">21 Mart 2026</div>
+            <div class="news-item-title">Uluslararası Kredi Notu Teyit Edildi</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-item-img c2">💡</div>
+          <div class="news-item-body">
+            <div class="news-item-date">15 Mart 2026</div>
+            <div class="news-item-title">Yapay Zeka Tabanlı Hizmetler Devrede</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-item-img c4">🏅</div>
+          <div class="news-item-body">
+            <div class="news-item-date">7 Mart 2026</div>
+            <div class="news-item-title">Kariyer Programına 1000 Başvuru</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 10. FOOTER ── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">akbank</div>
+        <div class="footer-tagline">Güçlü, güvenilir ve yenilikçi bankacılık hizmetleriyle yanınızdayız.</div>
+        <div class="footer-socials">
+          <div class="social-btn" title="Twitter/X">𝕏</div>
+          <div class="social-btn" title="Instagram">📷</div>
+          <div class="social-btn" title="LinkedIn">in</div>
+          <div class="social-btn" title="YouTube">▶</div>
+          <div class="social-btn" title="Facebook">f</div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Bireysel</h4>
+        <ul>
+          <li><a href="#">Hesaplar</a></li>
+          <li><a href="#">Kredi Kartları</a></li>
+          <li><a href="#">Krediler</a></li>
+          <li><a href="#">Yatırım</a></li>
+          <li><a href="#">Sigorta</a></li>
+          <li><a href="#">Emeklilik</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>KOBİ &amp; Ticari</h4>
+        <ul>
+          <li><a href="#">İşletme Hesabı</a></li>
+          <li><a href="#">KOBİ Kredisi</a></li>
+          <li><a href="#">POS Çözümleri</a></li>
+          <li><a href="#">Dış Ticaret</a></li>
+          <li><a href="#">Nakit Yönetimi</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Dijital</h4>
+        <ul>
+          <li><a href="#">Akbank Mobil</a></li>
+          <li><a href="#">İnternet Bankacılığı</a></li>
+          <li><a href="#">API Bankacılığı</a></li>
+          <li><a href="#">Axess Online</a></li>
+          <li><a href="#">Sanal Kart</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kurumsal</h4>
+        <ul>
+          <li><a href="#">Hakkımızda</a></li>
+          <li><a href="#">Yatırımcı İlişkileri</a></li>
+          <li><a href="#">Kariyer</a></li>
+          <li><a href="#">Basın Odası</a></li>
+          <li><a href="#">Sürdürülebilirlik</a></li>
+          <li><a href="#">İletişim</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Akbank T.A.Ş. Tüm hakları saklıdır. BDDK tarafından denetlenmektedir.</div>
+      <div class="footer-bottom-links">
+        <a href="#">Gizlilik Politikası</a>
+        <a href="#">Kullanım Koşulları</a>
+        <a href="#">Çerez Politikası</a>
+        <a href="#">KVKK</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── SLIDER ──
+  let currentSlide = 0;
+  const totalSlides = 3;
+  const slidesEl = document.getElementById('heroSlides');
+
+  function updateSlider() {
+    slidesEl.style.transform = `translateX(-${currentSlide * 33.333}%)`;
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === currentSlide);
+    });
+  }
+
+  function changeSlide(dir) {
+    currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
+    updateSlider();
+    resetAutoplay();
+  }
+
+  function goSlide(n) {
+    currentSlide = n;
+    updateSlider();
+    resetAutoplay();
+  }
+
+  let autoplay = setInterval(() => changeSlide(1), 5000);
+  function resetAutoplay() {
+    clearInterval(autoplay);
+    autoplay = setInterval(() => changeSlide(1), 5000);
+  }
+
+  // ── TABS ──
+  function switchTab(btn, id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+  }
+
+  // ── LOAN CALC ──
+  function calcLoan() {
+    const P = parseFloat(document.getElementById('loanAmount').value);
+    const n = parseFloat(document.getElementById('loanTerm').value);
+    const r = parseFloat(document.getElementById('loanRate').value) / 100;
+    const el = document.getElementById('loanResult');
+    if (!P || !n || !r) { el.textContent = '—'; return; }
+    const monthly = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    el.textContent = monthly.toLocaleString('tr-TR', { maximumFractionDigits: 0 });
+  }
+
+  // ── GOLD CALC ──
+  const gramPrice = 2190;
+  const goldMultipliers = { gram: 1, ceyrek: 1.75, yarim: 3.5, tam: 7 };
+
+  function calcGold() {
+    const amount = parseFloat(document.getElementById('goldAmount').value);
+    const type = document.getElementById('goldType').value;
+    const el = document.getElementById('goldResult');
+    if (!amount) { el.textContent = '—'; return; }
+    const total = amount * gramPrice * goldMultipliers[type];
+    el.textContent = total.toLocaleString('tr-TR', { maximumFractionDigits: 0 });
+  }
+</script>
+</body>
+</html>

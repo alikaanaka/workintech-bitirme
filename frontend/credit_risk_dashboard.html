@@ -167,6 +167,34 @@
     .field-input:focus { outline: none; border-color: var(--red); }
     .field-input::placeholder { color: #ccc; }
 
+    /* ── DROPDOWN SELECT ── */
+    .field-select {
+      padding: 6px 10px; border: 1.5px solid var(--gray-mid);
+      border-radius: 5px; font-size: 12px; font-family: inherit;
+      background: var(--white); color: var(--dark);
+      cursor: pointer; transition: border-color .15s; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      padding-right: 28px;
+    }
+    .field-select:focus { outline: none; border-color: var(--red); }
+
+    /* Seq table select */
+    .seq-table select {
+      width: 100%; padding: 3px 6px; border: 1px solid var(--gray-mid);
+      border-radius: 3px; font-size: 11px; font-family: inherit;
+      background: var(--white); appearance: none;
+    }
+
+    /* ── DATE FIELD ── */
+    .field-date { cursor: pointer; color: var(--dark); }
+    .day-hint {
+      font-size: 10px; color: var(--gray-text); font-style: italic;
+      min-height: 13px; padding-left: 2px;
+    }
+    .day-hint.negative { color: #3a7bd5; }
+    .day-hint.warn { color: var(--yellow); }
+
     /* Sequence toggle */
     .seq-toggle { padding: 12px 20px; border-bottom: 1px solid var(--gray-mid); }
     .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
@@ -405,7 +433,6 @@
     <div class="nav-links">
       <a href="#metrics" class="active">Genel Bakış</a>
       <a href="#scoring">Risk Değerlendirme</a>
-      <a href="#analysis">Analiz</a>
     </div>
     <div class="nav-badge">Ensemble v20260422</div>
   </div>
@@ -416,7 +443,7 @@
 
   <div style="margin-bottom:20px; margin-top:8px;">
     <div class="page-title">Kredi Temerrüt Risk Dashboard</div>
-    <div class="page-subtitle">Home Credit — Ensemble Model (LGBM + LSTM) &nbsp;·&nbsp; Model ID: ensemble_top50_lstm_20260422 &nbsp;·&nbsp; Demo modu aktif</div>
+    
   </div>
 
   <!-- ── SECTION 1: METRIC CARDS ── -->
@@ -479,8 +506,8 @@
         <!-- ACCORDION: EXT SOURCE -->
         <div class="accordion">
           <div class="accordion-header open" onclick="toggleAccordion(this)">
-            <span>🔢 Kredi Skorları (EXT_SOURCE)</span>
-            <span><span class="badge">7</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+            <span>🔢 Kredi Skorları</span>
+            <span><span class="badge">4</span> &nbsp; <span class="accordion-arrow">▼</span></span>
           </div>
           <div class="accordion-body open">
             <div class="feature-grid" id="grp-ext"></div>
@@ -502,7 +529,7 @@
         <div class="accordion">
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <span>📅 Süreler ve Günler</span>
-            <span><span class="badge">8</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+            <span><span class="badge">6</span> &nbsp; <span class="accordion-arrow">▼</span></span>
           </div>
           <div class="accordion-body">
             <div class="feature-grid" id="grp-days"></div>
@@ -513,7 +540,7 @@
         <div class="accordion">
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <span>🏦 Büro Verileri</span>
-            <span><span class="badge">8</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+            <span><span class="badge">7</span> &nbsp; <span class="accordion-arrow">▼</span></span>
           </div>
           <div class="accordion-body">
             <div class="feature-grid" id="grp-bureau"></div>
@@ -524,7 +551,7 @@
         <div class="accordion">
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <span>📋 Taksit Geçmişi</span>
-            <span><span class="badge">6</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+            <span><span class="badge">5</span> &nbsp; <span class="accordion-arrow">▼</span></span>
           </div>
           <div class="accordion-body">
             <div class="feature-grid" id="grp-inst"></div>
@@ -535,7 +562,7 @@
         <div class="accordion">
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <span>💰 Kredi Kartı Verileri</span>
-            <span><span class="badge">6</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+            <span><span class="badge">5</span> &nbsp; <span class="accordion-arrow">▼</span></span>
           </div>
           <div class="accordion-body">
             <div class="feature-grid" id="grp-cc"></div>
@@ -546,7 +573,7 @@
         <div class="accordion">
           <div class="accordion-header" onclick="toggleAccordion(this)">
             <span>👤 Demografik & Kategorik</span>
-            <span><span class="badge">7</span> &nbsp; <span class="accordion-arrow">▼</span></span>
+            <span><span class="badge">7</span> &nbsp; <span class="accordion-arrow">▼</span></span><!-- 3 sayısal + 4 dropdown -->
           </div>
           <div class="accordion-body">
             <div class="feature-grid" id="grp-demo"></div>
@@ -556,7 +583,7 @@
         <!-- SEQ TOGGLE -->
         <div class="seq-toggle">
           <div class="toggle-row">
-            <span class="toggle-label">🔄 Önceki Başvurular (LSTM)</span>
+            <span class="toggle-label">🔄 Önceki Akbank Başvurular</span>
             <label class="toggle-switch">
               <input type="checkbox" id="seq-toggle-cb" onchange="toggleSeq(this)">
               <span class="toggle-slider"></span>
@@ -571,7 +598,7 @@
                   <th>Anüite</th>
                   <th>Kredi Türü</th>
                   <th>Durum</th>
-                  <th>Gün (geçmiş)</th>
+                  <th>Gün (geçmiş, pozitif)</th>
                 </tr>
               </thead>
               <tbody id="seq-tbody">
@@ -579,25 +606,52 @@
                   <td>1</td>
                   <td><input type="number" placeholder="180000" id="seq_1_amt"></td>
                   <td><input type="number" placeholder="9000" id="seq_1_ann"></td>
-                  <td><input type="text" placeholder="Cash loans" id="seq_1_type"></td>
-                  <td><input type="text" placeholder="Approved" id="seq_1_status"></td>
-                  <td><input type="number" placeholder="-730" id="seq_1_days"></td>
+                  <td><select id="seq_1_type">
+                    <option value="Cash loans">Nakit Kredi</option>
+                    <option value="Consumer loans">Tüketici Kredisi</option>
+                    <option value="Revolving loans">Döner Kredi</option>
+                  </select></td>
+                  <td><select id="seq_1_status">
+                    <option value="Approved">Onaylandı</option>
+                    <option value="Refused">Reddedildi</option>
+                    <option value="Canceled">İptal Edildi</option>
+                    <option value="Unused offer">Kullanılmadı</option>
+                  </select></td>
+                  <td><input type="number" min="0" placeholder="730" id="seq_1_days"></td>
                 </tr>
                 <tr>
                   <td>2</td>
                   <td><input type="number" placeholder="90000" id="seq_2_amt"></td>
                   <td><input type="number" placeholder="4500" id="seq_2_ann"></td>
-                  <td><input type="text" placeholder="Consumer loans" id="seq_2_type"></td>
-                  <td><input type="text" placeholder="Refused" id="seq_2_status"></td>
-                  <td><input type="number" placeholder="-1460" id="seq_2_days"></td>
+                  <td><select id="seq_2_type">
+                    <option value="Cash loans">Nakit Kredi</option>
+                    <option value="Consumer loans" selected>Tüketici Kredisi</option>
+                    <option value="Revolving loans">Döner Kredi</option>
+                  </select></td>
+                  <td><select id="seq_2_status">
+                    <option value="Approved">Onaylandı</option>
+                    <option value="Refused" selected>Reddedildi</option>
+                    <option value="Canceled">İptal Edildi</option>
+                    <option value="Unused offer">Kullanılmadı</option>
+                  </select></td>
+                  <td><input type="number" min="0" placeholder="1460" id="seq_2_days"></td>
                 </tr>
                 <tr>
                   <td>3</td>
                   <td><input type="number" placeholder="50000" id="seq_3_amt"></td>
                   <td><input type="number" placeholder="2500" id="seq_3_ann"></td>
-                  <td><input type="text" placeholder="Revolving loans" id="seq_3_type"></td>
-                  <td><input type="text" placeholder="Approved" id="seq_3_status"></td>
-                  <td><input type="number" placeholder="-2190" id="seq_3_days"></td>
+                  <td><select id="seq_3_type">
+                    <option value="Cash loans">Nakit Kredi</option>
+                    <option value="Consumer loans">Tüketici Kredisi</option>
+                    <option value="Revolving loans" selected>Döner Kredi</option>
+                  </select></td>
+                  <td><select id="seq_3_status">
+                    <option value="Approved" selected>Onaylandı</option>
+                    <option value="Refused">Reddedildi</option>
+                    <option value="Canceled">İptal Edildi</option>
+                    <option value="Unused offer">Kullanılmadı</option>
+                  </select></td>
+                  <td><input type="number" min="0" placeholder="2190" id="seq_3_days"></td>
                 </tr>
               </tbody>
             </table>
@@ -637,8 +691,7 @@
               <text x="200" y="126" font-size="10" fill="#E30A17" font-weight="700" text-anchor="end">100</text>
               <!-- değer -->
               <text id="gauge-value" class="gauge-value-text" x="110" y="94" text-anchor="middle">—</text>
-              <text class="gauge-label-text" x="110" y="110" text-anchor="middle">Risk Skoru</text>
-              <text id="gauge-model-lbl" class="gauge-model-text" x="110" y="124" text-anchor="middle">henüz hesaplanmadı</text>
+              
             </svg>
           </div>
         </div>
@@ -687,116 +740,6 @@
     </div>
   </div>
 
-  <!-- ── SECTION 3: TABS ── -->
-  <div id="analysis" class="tabs-section">
-    <div class="section-label">Model Analizi</div>
-    <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('importance', this)">📊 Özellik Önem Sıralaması</button>
-      <button class="tab-btn" onclick="switchTab('confusion', this)">🔢 Confusion Matrix</button>
-    </div>
-
-    <!-- Özellik Önem Sıralaması -->
-    <div class="tab-panel active" id="tab-importance">
-      <div class="fi-card">
-        <div class="fi-toolbar">
-          <input class="fi-search" type="text" placeholder="Özellik ara..." id="fi-search" oninput="renderFeatureImportance()">
-          <select class="fi-top-select" id="fi-top" onchange="renderFeatureImportance()">
-            <option value="15">İlk 15</option>
-            <option value="25">İlk 25</option>
-            <option value="50">Tümü (50)</option>
-          </select>
-          <span style="font-size:12px;color:var(--gray-text);">LGBM gain bazlı · CV-5</span>
-        </div>
-        <div class="fi-chart" id="fi-chart"></div>
-      </div>
-    </div>
-
-    <!-- Confusion Matrix -->
-    <div class="tab-panel" id="tab-confusion">
-      <div class="cm-card">
-        <div class="cm-layout">
-          <div>
-            <div class="cm-title">Confusion Matrix — Holdout Test</div>
-            <div class="cm-subtitle">122,005 örnek · Eşik: 0.6322</div>
-            <div class="cm-axis-label">Tahmin Edilen</div>
-            <div class="cm-grid">
-              <div></div>
-              <div class="cm-header">Negatif (0)</div>
-              <div class="cm-header">Pozitif (1)</div>
-              <div class="cm-row-label">Gerçek Negatif</div>
-              <div class="cm-cell tn">
-                <div class="cm-count">108,469</div>
-                <div class="cm-label">Doğru Negatif (TN)</div>
-                <div class="cm-pct">88.9%</div>
-              </div>
-              <div class="cm-cell fp">
-                <div class="cm-count">4,606</div>
-                <div class="cm-label">Yanlış Pozitif (FP)</div>
-                <div class="cm-pct">3.8%</div>
-              </div>
-              <div class="cm-row-label">Gerçek Pozitif</div>
-              <div class="cm-cell fn">
-                <div class="cm-count">4,130</div>
-                <div class="cm-label">Yanlış Negatif (FN)</div>
-                <div class="cm-pct">3.4%</div>
-              </div>
-              <div class="cm-cell tp">
-                <div class="cm-count">5,800</div>
-                <div class="cm-label">Doğru Pozitif (TP)</div>
-                <div class="cm-pct">4.8% ✓</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="cm-metrics">
-            <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Performans Metrikleri</div>
-            <div class="cm-metric-row">
-              <div>
-                <div class="cm-metric-name">Doğruluk (Accuracy)</div>
-                <div class="cm-metric-desc">TN+TP / Toplam</div>
-              </div>
-              <div class="cm-metric-val">93.67%</div>
-            </div>
-            <div class="cm-metric-row">
-              <div>
-                <div class="cm-metric-name">Hassasiyet (Precision)</div>
-                <div class="cm-metric-desc">TP / (TP+FP)</div>
-              </div>
-              <div class="cm-metric-val">55.74%</div>
-            </div>
-            <div class="cm-metric-row">
-              <div>
-                <div class="cm-metric-name">Duyarlılık (Recall)</div>
-                <div class="cm-metric-desc">TP / (TP+FN)</div>
-              </div>
-              <div class="cm-metric-val">58.40%</div>
-            </div>
-            <div class="cm-metric-row">
-              <div>
-                <div class="cm-metric-name">F1 Skoru</div>
-                <div class="cm-metric-desc">Harmonic mean (Prec, Recall)</div>
-              </div>
-              <div class="cm-metric-val">57.04%</div>
-            </div>
-            <div class="cm-metric-row">
-              <div>
-                <div class="cm-metric-name">ROC-AUC</div>
-                <div class="cm-metric-desc">Ensemble model</div>
-              </div>
-              <div class="cm-metric-val" style="color:var(--red);font-size:22px;">0.9114</div>
-            </div>
-            <div class="cm-metric-row">
-              <div>
-                <div class="cm-metric-name">KS İstatistiği</div>
-                <div class="cm-metric-desc">Max ayırım gücü</div>
-              </div>
-              <div class="cm-metric-val">0.682</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
 </div><!-- /container -->
 
@@ -820,21 +763,21 @@
 ═══════════════════════════════════════════════════════════════ */
 const FEATURES = [
   // rank, key, label, group, gain_norm, effective_gain, placeholder, default_demo, default_high
-  [1,  "EXT_SOURCE_MEAN",                    "Ext Source Ortalama",           "ext",    1.000, 184523.4, "0.55",  0.58,  0.22],
+  [1,  "EXT_SOURCE_MEAN",                    "Harici Skor Ortalama",           "ext",    1.000, 184523.4, "0.55",  0.58,  0.22],
   [2,  "CREDIT_TERM",                         "Kredi Vadesi (ay)",             "credit",  0.721, 133012.8, "36",    36.0,  72.0],
-  [3,  "EXT_SOURCE_3",                        "Ext Source 3",                  "ext",    0.698, 128782.1, "0.50",  0.52,  0.18],
+  [3,  "EXT_SOURCE_3",                        "Harici Skor (Kaynak 3)",                  "ext",    0.698, 128782.1, "0.50",  0.52,  0.18],
   [4,  "b_avg_utilization",                   "Büro Ort. Kullanım",            "bureau", 0.612, 112892.3, "0.30",  0.28,  0.78],
-  [5,  "EXT_SOURCE_1",                        "Ext Source 1",                  "ext",    0.589, 108621.7, "0.60",  0.62,  0.25],
-  [6,  "EXT_SOURCE_2",                        "Ext Source 2",                  "ext",    0.571, 105334.2, "0.58",  0.60,  0.20],
-  [7,  "EXT_SOURCE_PROD",                     "Ext Source Çarpım",             "ext",    0.543, 100122.8, "0.33",  0.35,  0.08],
+  [5,  "EXT_SOURCE_1",                        "Harici Skor (Kaynak 1)",                  "ext",    0.589, 108621.7, "0.60",  0.62,  0.25],
+  [6,  "EXT_SOURCE_2",                        "Harici Skor (Kaynak 2)",                  "ext",    0.571, 105334.2, "0.58",  0.60,  0.20],
+  [7,  "EXT_SOURCE_PROD",                     "Harici Skor Çarpım",             "ext",    0.543, 100122.8, "0.33",  0.35,  0.08],
   [8,  "DAYS_EMPLOYED_PERCENT",               "İstihdam Oranı",                "days",   0.498,  91832.6, "0.15",  0.20,  0.05],
-  [9,  "DAYS_EMPLOYED",                       "İstihdamdaki Gün",              "days",   0.471,  86843.3, "-1000", -1800, -180],
+  [9,  "DAYS_EMPLOYED",                       "İstihdamdaki Gün",              "days",   0.471,  86843.3, "1000",  1800,  180],
   [10, "int_max_ins_days_late_ever",          "Max Gecikme Günü (Taksit)",     "inst",   0.432,  79642.1, "0",     0,     45],
   [11, "b_avg_loan_duration",                 "Büro Ort. Kredi Süresi",        "bureau", 0.408,  75221.4, "24",    30.0,  12.0],
-  [12, "EXT_SOURCE_STD",                      "Ext Source Std",                "ext",    0.387,  71382.9, "0.05",  0.04,  0.15],
-  [13, "DAYS_ID_PUBLISH",                     "Kimlik Yenileme Günü",          "days",   0.362,  66771.8, "-2000", -2500,-500],
-  [14, "DAYS_LAST_PHONE_CHANGE",              "Son Telefon Değişim Günü",      "days",   0.341,  62882.3, "-500",  -800,  -60],
-  [15, "DAYS_REGISTRATION",                   "Kayıt Günü",                    "days",   0.323,  59543.1, "-3000", -4000,-800],
+  [12, "EXT_SOURCE_STD",                      "Harici Skor Std",                "ext",    0.387,  71382.9, "0.05",  0.04,  0.15],
+  [13, "DAYS_ID_PUBLISH",                     "Kimlik Yenileme Tarihi",        "days",   0.362,  66771.8, "",      -2500,-500],
+  [14, "DAYS_LAST_PHONE_CHANGE",              "Son Telefon Değişim Tarihi",    "days",   0.341,  62882.3, "",      -800,  -60],
+  [15, "DAYS_REGISTRATION",                   "Kayıt Tarihi",                  "days",   0.323,  59543.1, "",      -4000,-800],
   [16, "AMT_ANNUITY",                         "Anüite Tutarı (₺)",             "credit", 0.304,  56032.7, "10000", 9500,  18000],
   [17, "b_total_current_debt",                "Büro Toplam Mevcut Borç",       "bureau", 0.287,  52921.4, "50000", 45000, 120000],
   [18, "int_total_remaining_installments",    "Kalan Taksit Sayısı",           "inst",   0.271,  49932.8, "24",    20.0,  48.0],
@@ -848,7 +791,7 @@ const FEATURES = [
   [26, "CREDIT_INCOME_RATIO",                 "Kredi/Gelir Oranı",             "credit", 0.176,  32432.8, "2.22",  2.00,  5.50],
   [27, "int_total_remaining_debt",            "Kalan Borç Tutarı",             "inst",   0.167,  30782.1, "40000", 35000, 95000],
   [28, "OWN_CAR_AGE",                         "Araç Yaşı",                     "demo",   0.158,  29132.4, "5",     6.0,   15.0],
-  [29, "DAYS_BIRTH",                          "Doğum Günü (negatif)",          "days",   0.149,  27482.7, "-12000",-13870,-8760],
+  [29, "DAYS_BIRTH",                          "Doğum Tarihi",                  "days",   0.149,  27482.7, "",      -13870,-8760],
   [30, "BASEMENTAREA_MODE",                   "Bodrum Alan (Moda)",            "demo",   0.141,  26032.1, "0.05",  0.06,  0.02],
   [31, "INCOME_PER_PERSON",                   "Kişi Başı Gelir",               "credit", 0.133,  24532.8, "45000", 48000, 22000],
   [32, "b_total_history_months",              "Büro Toplam Geçmiş Ay",         "bureau", 0.126,  23232.1, "60",    72.0,  18.0],
@@ -872,30 +815,163 @@ const FEATURES = [
   [50, "int_max_pos_dpd_ever",                "Max Pozitif DPD",               "inst",   0.042,   7732.1, "0",     0,     90],
 ];
 
+/* Takvimle girilecek alanlar (kullanıcı tarih seçer → negatif gün hesaplanır) */
+const DATE_PICKER_KEYS = new Set(['DAYS_ID_PUBLISH', 'DAYS_LAST_PHONE_CHANGE', 'DAYS_REGISTRATION', 'DAYS_BIRTH']);
+/* Pozitif girilip otomatik negatife çevrilecek alan */
+const POSITIVE_DAYS_KEYS = new Set(['DAYS_EMPLOYED']);
+
+/* UI'dan gizlenen alanlar — ortalama değerle otomatik doldurulur */
+const HIDDEN_FIELDS = {
+  'EXT_SOURCE_PROD':              0.18,   // EXT_SOURCE değerlerinin çarpımı ortalaması
+  'EXT_SOURCE_STD':               0.10,   // EXT_SOURCE standart sapma ortalaması
+  'WEEKDAY_APPR_PROCESS_START_ENC': 2.0,  // Hafta içi ortalama (Salı ≈ 2)
+  'int_max_pos_dpd_ever':         5.0,    // Taksit geçmişi pozitif DPD ortalaması
+  'cc_total_transaction_count':   35.0,   // Kredi kartı toplam işlem ortalaması
+  'TOTALAREA_MODE':               0.08,   // Toplam alan moda ortalaması
+  'BASEMENTAREA_MODE':            0.05,   // Bodrum alan moda ortalaması
+  'HOUR_APPR_PROCESS_START':      11.0,   // Başvuru saati ortalaması
+};
+const HIDDEN_KEYS = new Set(Object.keys(HIDDEN_FIELDS));
+
+/* Dropdown alanları — her biri {label, value} listesi */
+const DROPDOWN_FIELDS = {
+  'CODE_GENDER_ENC': [
+    { label: 'Kadın (F)', value: 0 },
+    { label: 'Erkek (M)', value: 1 },
+  ],
+  'NAME_EDUCATION_TYPE_ENC': [
+    { label: 'Lise / Meslek Okulu', value: 0 },
+    { label: 'Yüksek Öğretim',      value: 1 },
+    { label: 'Yarım Yüksek Öğretim', value: 2 },
+    { label: 'Alt Ortaöğretim',     value: 3 },
+    { label: 'Akademik Derece',     value: 4 },
+  ],
+  'OCCUPATION_TYPE_ENC': [
+    { label: 'İşçi (Laborers)',           value: 0 },
+    { label: 'Çekirdek Personel',         value: 1 },
+    { label: 'Muhasebeci',                value: 2 },
+    { label: 'Yönetici',                  value: 3 },
+    { label: 'Sürücü',                    value: 4 },
+    { label: 'Satış Personeli',           value: 5 },
+    { label: 'Temizlik Personeli',        value: 6 },
+    { label: 'Mutfak Personeli',          value: 7 },
+    { label: 'Özel Hizmet Personeli',     value: 8 },
+    { label: 'Sağlık Personeli',          value: 9 },
+    { label: 'Güvenlik Personeli',        value: 10 },
+    { label: 'Yüksek Teknik Personel',    value: 11 },
+    { label: 'Garson / Barmen',           value: 12 },
+    { label: 'Düşük Nitelikli İşçi',      value: 13 },
+    { label: 'Emlak Danışmanı',           value: 14 },
+    { label: 'Sekreter',                  value: 15 },
+    { label: 'IT Personeli',              value: 16 },
+    { label: 'İK Personeli',              value: 17 },
+  ],
+  'ORGANIZATION_TYPE_ENC': [
+    { label: 'Belirtilmemiş (XNA)',       value: 0 },
+    { label: 'İşletme Tip 1',            value: 1 },
+    { label: 'İşletme Tip 2',            value: 2 },
+    { label: 'İşletme Tip 3',            value: 3 },
+    { label: 'Devlet Kurumu',            value: 4 },
+    { label: 'Askeri',                   value: 5 },
+    { label: 'Polis / Emniyet',          value: 6 },
+    { label: 'Serbest Meslek',           value: 7 },
+    { label: 'Sağlık / Tıp',            value: 8 },
+    { label: 'Okul / Eğitim',           value: 9 },
+    { label: 'Ulaşım',                  value: 10 },
+    { label: 'İnşaat',                  value: 11 },
+    { label: 'Ticaret',                 value: 12 },
+    { label: 'Diğer',                   value: 13 },
+    { label: 'Elektrik / Enerji',        value: 14 },
+    { label: 'Güvenlik Hizmetleri',     value: 15 },
+    { label: 'Tarım',                   value: 16 },
+    { label: 'Restoran / Yiyecek',      value: 17 },
+    { label: 'Otel / Konaklama',        value: 18 },
+    { label: 'Telekomünikasyon',        value: 19 },
+    { label: 'Kültür / Sanat',          value: 20 },
+  ],
+};
+const DROPDOWN_KEYS = new Set(Object.keys(DROPDOWN_FIELDS));
+
+/* ── TARİH DÖNÜŞTÜRÜCÜLER ── */
+/* Seçili tarih stringini bugüne göre negatif gün sayısına çevirir */
+function dateToDays(dateStr) {
+  if (!dateStr) return null;
+  const sel = new Date(dateStr);
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.round((sel - today) / 86400000);
+}
+/* Negatif gün sayısını "YYYY-MM-DD" formatına çevirir (autofill için) */
+function daysToDate(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + Math.round(days));
+  return d.toISOString().slice(0, 10);
+}
+/* Takvim değiştiğinde ipucu günceller */
+function updateDayHint(key, dateVal) {
+  const hint = document.getElementById('hint_' + key);
+  if (!hint) return;
+  if (!dateVal) { hint.textContent = '—'; hint.className = 'day-hint'; return; }
+  const days = dateToDays(dateVal);
+  hint.textContent = `≈ ${days} gün`;
+  hint.className = 'day-hint' + (days < -365*15 ? ' warn' : ' negative');
+}
+
 /* Grupları form alanlarına eşle */
 const GRP_MAP = { ext:'grp-ext', credit:'grp-credit', days:'grp-days', bureau:'grp-bureau', inst:'grp-inst', cc:'grp-cc', demo:'grp-demo' };
 
 /* ── INIT ── */
 function init() {
   renderFeatureInputs();
-  renderFeatureImportance();
+  // Hidden alanlar renderFeatureInputs içinde ortalama ile başlatılıyor
 }
 
 /* ── FORM OLUŞTUR ── */
 function renderFeatureInputs() {
-  // Önce tüm grupları temizle
   Object.values(GRP_MAP).forEach(id => { document.getElementById(id).innerHTML = ''; });
+  const todayStr = new Date().toISOString().slice(0, 10);
 
   FEATURES.forEach(([rank, key, label, grp, , , placeholder]) => {
     const container = document.getElementById(GRP_MAP[grp]);
     if (!container) return;
+
+    if (HIDDEN_KEYS.has(key)) {
+      // Gizli alan: sadece hidden input, DOM'da yok ama değer taşıyor
+      const inp = document.createElement('input');
+      inp.type = 'hidden';
+      inp.id = 'f_' + key;
+      inp.value = HIDDEN_FIELDS[key];
+      container.appendChild(inp);
+      return;
+    }
+
     const div = document.createElement('div');
     div.className = 'field-group';
+    let inputHtml;
+
+    if (DATE_PICKER_KEYS.has(key)) {
+      inputHtml = `
+        <input class="field-input field-date" type="date" id="f_${key}" max="${todayStr}" data-key="${key}"
+               onchange="updateDayHint('${key}', this.value)">
+        <span class="day-hint" id="hint_${key}">—</span>
+      `;
+    } else if (POSITIVE_DAYS_KEYS.has(key)) {
+      inputHtml = `
+        <input class="field-input" type="number" min="0" step="1" id="f_${key}"
+               placeholder="${placeholder}" data-key="${key}">
+        <span class="day-hint">Pozitif gün girin — otomatik negatife çevrilir</span>
+      `;
+    } else if (DROPDOWN_KEYS.has(key)) {
+      const opts = DROPDOWN_FIELDS[key].map(o =>
+        `<option value="${o.value}">${o.label}</option>`
+      ).join('');
+      inputHtml = `<select class="field-select" id="f_${key}" data-key="${key}">${opts}</select>`;
+    } else {
+      inputHtml = `<input class="field-input" type="number" step="any" id="f_${key}" placeholder="${placeholder}" data-key="${key}">`;
+    }
+
     div.innerHTML = `
-      <label class="field-label">
-        <span class="field-rank">#${rank}</span> ${label}
-      </label>
-      <input class="field-input" type="number" step="any" id="f_${key}" placeholder="${placeholder}" data-key="${key}">
+      <label class="field-label"><span class="field-rank">#${rank}</span> ${label}</label>
+      ${inputHtml}
     `;
     container.appendChild(div);
   });
@@ -913,11 +989,25 @@ function toggleSeq(cb) {
   document.getElementById('seq-wrap').classList.toggle('open', cb.checked);
 }
 
-/* ── DEMOGRAFİK DOLDURMA ── */
+/* ── FORM DOLDURMA ── */
 function fillFromValues(values) {
   FEATURES.forEach(([, key]) => {
     const el = document.getElementById('f_' + key);
-    if (el && values[key] !== undefined) el.value = values[key];
+    if (!el || values[key] === undefined) return;
+    const v = values[key];
+    if (HIDDEN_KEYS.has(key)) {
+      // Gizli alana değer yaz (autofill ile override edilebilir)
+      el.value = typeof v === 'number' ? v : parseFloat(v);
+    } else if (DATE_PICKER_KEYS.has(key)) {
+      el.value = daysToDate(typeof v === 'number' ? v : parseFloat(v));
+      updateDayHint(key, el.value);
+    } else if (POSITIVE_DAYS_KEYS.has(key)) {
+      el.value = Math.abs(typeof v === 'number' ? v : parseFloat(v));
+    } else if (DROPDOWN_KEYS.has(key)) {
+      el.value = typeof v === 'number' ? v : parseFloat(v);
+    } else {
+      el.value = v;
+    }
   });
 }
 
@@ -938,8 +1028,15 @@ function autofillHighRisk() {
 function clearForm() {
   FEATURES.forEach(([,key]) => {
     const el = document.getElementById('f_' + key);
-    if (el) el.value = '';
+    if (!el) return;
+    if (HIDDEN_KEYS.has(key)) {
+      el.value = HIDDEN_FIELDS[key]; // gizli alanlar ortalamasına döner
+    } else {
+      el.value = '';
+    }
   });
+  // Takvim ipuçlarını sıfırla
+  DATE_PICKER_KEYS.forEach(key => updateDayHint(key, ''));
   resetResults();
   showToast('Form temizlendi.', 'success');
 }
@@ -997,7 +1094,16 @@ function exportJSON() {
   const out = { model: 'ensemble_top50_lstm_20260422', timestamp: new Date().toISOString(), features: {} };
   FEATURES.forEach(([,key]) => {
     const el = document.getElementById('f_' + key);
-    if (el && el.value !== '') out.features[key] = parseFloat(el.value);
+    if (!el) return;
+    if (HIDDEN_KEYS.has(key)) {
+      out.features[key] = parseFloat(el.value) || HIDDEN_FIELDS[key];
+    } else if (DATE_PICKER_KEYS.has(key) && el.value) {
+      out.features[key] = dateToDays(el.value);
+    } else if (POSITIVE_DAYS_KEYS.has(key) && el.value !== '') {
+      out.features[key] = -Math.abs(parseFloat(el.value));
+    } else if (el.value !== '') {
+      out.features[key] = parseFloat(el.value);
+    }
   });
   const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
@@ -1011,7 +1117,21 @@ function calculatePrediction() {
   const vals = {};
   FEATURES.forEach(([,key]) => {
     const el = document.getElementById('f_' + key);
-    vals[key] = el && el.value !== '' ? parseFloat(el.value) : null;
+    if (!el) return;
+    if (HIDDEN_KEYS.has(key)) {
+      // Gizli alan: mevcut değeri kullan (ortalama ya da autofill'den gelen)
+      vals[key] = parseFloat(el.value) || HIDDEN_FIELDS[key];
+    } else if (el.value === '') {
+      vals[key] = null;
+    } else if (DATE_PICKER_KEYS.has(key)) {
+      vals[key] = dateToDays(el.value);
+    } else if (POSITIVE_DAYS_KEYS.has(key)) {
+      vals[key] = -Math.abs(parseFloat(el.value));
+    } else if (DROPDOWN_KEYS.has(key)) {
+      vals[key] = parseFloat(el.value);
+    } else {
+      vals[key] = parseFloat(el.value);
+    }
   });
 
   // Temel değerler
@@ -1092,10 +1212,9 @@ function updateGauge(score, modelName) {
   const x = cx + r * Math.cos(rad);
   const y = cy + r * Math.sin(rad);
 
-  // Büyük yay bayrağı
-  const large = pct > 0.5 ? 1 : 0;
+  // Büyük yay bayrağı: yarı daire (180°) olduğu için her zaman 0 — aksi hâlde score>50'de yay ters yöne gider
   const arc = document.getElementById('gauge-arc');
-  arc.setAttribute('d', `M 20 110 A 90 90 0 ${large} 1 ${x.toFixed(1)} ${y.toFixed(1)}`);
+  arc.setAttribute('d', `M 20 110 A 90 90 0 0 1 ${x.toFixed(1)} ${y.toFixed(1)}`);
 
   // İğne
   const needle = document.getElementById('gauge-needle');
@@ -1140,15 +1259,15 @@ function updateDecision(score, isEnsemble) {
   box.className = 'decision-box';
   if (score < 30) {
     box.classList.add('low');
-    verdict.textContent = 'ONAYLA';
+    verdict.textContent = 'Düşük Risk';
     band.textContent = 'Düşük Risk · Skor: ' + score + ' / 100';
   } else if (score < 70) {
     box.classList.add('medium');
-    verdict.textContent = 'İNCELE';
+    verdict.textContent = 'Orta Risk';
     band.textContent = 'Orta Risk · Skor: ' + score + ' / 100';
   } else {
     box.classList.add('high');
-    verdict.textContent = 'REDDET';
+    verdict.textContent = 'Yüksek Risk';
     band.textContent = 'Yüksek Risk · Skor: ' + score + ' / 100';
   }
   thr.textContent = isEnsemble
@@ -1172,41 +1291,7 @@ function resetResults() {
   document.getElementById('decision-band').textContent = 'Henüz hesaplanmadı';
 }
 
-/* ── FEATURE IMPORTANCE CHART ── */
-function renderFeatureImportance() {
-  const query = (document.getElementById('fi-search').value || '').toLowerCase();
-  const topN  = parseInt(document.getElementById('fi-top').value, 10);
-  const chart = document.getElementById('fi-chart');
-
-  let filtered = FEATURES.filter(([rank, key, label]) =>
-    label.toLowerCase().includes(query) || key.toLowerCase().includes(query)
-  );
-  // Sıraya göre kıs
-  filtered = filtered.slice(0, topN);
-
-  // Max gain_norm
-  const maxNorm = Math.max(...filtered.map(f => f[4]));
-
-  chart.innerHTML = filtered.map(([rank, key, label, , norm, gain]) => `
-    <div class="fi-row">
-      <span class="fi-rank">${rank}</span>
-      <span class="fi-name" title="${key}">${label}</span>
-      <div class="fi-bar-track">
-        <div class="fi-bar-fill" style="width:${(norm / maxNorm * 100).toFixed(1)}%"></div>
-      </div>
-      <span class="fi-gain">${(gain/1000).toFixed(0)}K</span>
-      <span class="fi-pct">${(norm * 100).toFixed(1)}%</span>
-    </div>
-  `).join('');
-}
-
-/* ── TAB ── */
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
-}
+/* Feature importance ve tab fonksiyonları kaldırıldı (analiz bölümü silindi) */
 
 /* ── TOAST ── */
 let _toastTimer = null;

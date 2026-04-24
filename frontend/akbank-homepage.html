@@ -850,7 +850,23 @@
 <!-- ── 3. HERO SLIDER ── -->
 <section class="hero">
   <div class="hero-slides" id="heroSlides">
-    <!-- Slide 1 -->
+    <!-- Slide 1 — Risk Analitik -->
+    <div class="slide slide-2-bg">
+      <div class="slide-content">
+        <div class="slide-tag">Yapay Zeka · Risk Analitik</div>
+        <div class="slide-title">Kredi Riskini<br>Anında Değerlendirin</div>
+        <div class="slide-sub">LightGBM + LSTM ensemble modeliyle saniyeler içinde temerrüt riski tahmini. Şeffaf, açıklanabilir ve güvenilir karar desteği.</div>
+        <a href="credit_risk_dashboard_akbank.html" class="btn-slide">Dashboard'u Aç</a>
+        <a href="homecredit_project_details.html" class="btn-slide-outline">Model Detayları</a>
+      </div>
+      <div class="slide-graphic">
+        <div class="graphic-icon">⚡</div>
+        <div class="graphic-value" style="font-size:22px;line-height:1.3;">Saniyeler İçinde<br>Doğru Karar</div>
+        <div class="graphic-label" style="margin-top:8px;">Yapay zeka her başvuruyu</div>
+        <div class="graphic-label"><strong style="color:#fff;">adil ve şeffaf</strong> değerlendirir</div>
+      </div>
+    </div>
+    <!-- Slide 2 — İhtiyaç Kredisi -->
     <div class="slide slide-1-bg">
       <div class="slide-content">
         <div class="slide-tag">Özel Teklif</div>
@@ -863,21 +879,6 @@
         <div class="graphic-icon">💳</div>
         <div class="graphic-label">Aylık Faiz Oranı</div>
         <div class="graphic-value">%3.49</div>
-      </div>
-    </div>
-    <!-- Slide 2 -->
-    <div class="slide slide-2-bg">
-      <div class="slide-content">
-        <div class="slide-tag">Dijital Bankacılık</div>
-        <div class="slide-title">Akbank Mobil ile<br>Her Şey Parmaklarında</div>
-        <div class="slide-sub">7/24 kesintisiz hizmet, anlık bildirimler ve güvenli işlemler.</div>
-        <a href="https://home-credit-app-433518789604.europe-west1.run.app/" class="btn-slide">Uygulamayı İndir</a>
-        <a href="#" class="btn-slide-outline">Keşfet</a>
-      </div>
-      <div class="slide-graphic">
-        <div class="graphic-icon">📱</div>
-        <div class="graphic-label">Aktif Kullanıcı</div>
-        <div class="graphic-value">12M+</div>
       </div>
     </div>
     <!-- Slide 3 -->
@@ -931,9 +932,9 @@
       <div class="qs-icon">📊</div>
       <div class="qs-label">Yatırım İşlemleri</div>
     </div>
-    <div class="qs-item">
-      <div class="qs-icon">🌍</div>
-      <div class="qs-label">Döviz Al / Sat</div>
+    <div class="qs-item" onclick="window.location='credit_risk_dashboard_akbank.html'" style="cursor:pointer;">
+      <div class="qs-icon">🤖</div>
+      <div class="qs-label">Risk Analitik</div>
     </div>
     <div class="qs-item">
       <div class="qs-icon">🛡️</div>
@@ -1435,19 +1436,11 @@
   function changeSlide(dir) {
     currentSlide = (currentSlide + dir + totalSlides) % totalSlides;
     updateSlider();
-    resetAutoplay();
   }
 
   function goSlide(n) {
     currentSlide = n;
     updateSlider();
-    resetAutoplay();
-  }
-
-  let autoplay = setInterval(() => changeSlide(1), 5000);
-  function resetAutoplay() {
-    clearInterval(autoplay);
-    autoplay = setInterval(() => changeSlide(1), 5000);
   }
 
   // ── TABS ──

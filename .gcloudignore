@@ -1,0 +1,27 @@
+# This file controls what gcloud builds submit sends to Cloud Build.
+# .gitignore is NOT used when this file exists.
+
+frontend/
+data/
+!src/data/
+tests/
+reports/
+.git/
+*.md
+*.pptx
+firebase.json
+.firebaserc
+run.py
+requirements.txt
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.env
+.venv/
+venv/
+.DS_Store
+*.log
+.idea/
+.vscode/

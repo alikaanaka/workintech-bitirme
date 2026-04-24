@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akbank — Home Credit Risk Projesi</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red:       #E30A17;
+      --red-dark:  #b5070f;
+      --red-light: #fef0f0;
+      --dark:      #1a1a1a;
+      --dark2:     #16213e;
+      --white:     #fff;
+      --gray-light:#f5f5f5;
+      --gray-mid:  #e0e0e0;
+      --gray-text: #666;
+      --green:     #1a8c4e;
+      --blue:      #3a7bd5;
+      --purple:    #8e44ad;
+      --yellow:    #e8a000;
+      --font:      'Segoe UI', Arial, sans-serif;
+      --radius:    10px;
+      --shadow:    0 4px 20px rgba(0,0,0,0.08);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); color: var(--dark); background: var(--white); }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: var(--white);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky; top: 0; z-index: 200;
+    }
+    .navbar-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 32px;
+      display: flex; align-items: center; height: 64px; gap: 20px;
+    }
+    .logo-mark {
+      width: 110px; height: 38px; background: var(--red); border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--white); font-size: 22px; font-weight: 800; letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+    .nav-breadcrumb { font-size: 13px; color: var(--gray-text); display: flex; align-items: center; gap: 8px; }
+    .nav-breadcrumb a:hover { color: var(--red); }
+    .nav-breadcrumb .sep { opacity: .4; }
+    .nav-breadcrumb .current { color: var(--dark); font-weight: 600; }
+    .nav-pills { display: flex; gap: 4px; margin-left: auto; }
+    .nav-pill {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      color: var(--gray-text); transition: all .15s; cursor: pointer;
+    }
+    .nav-pill:hover { background: var(--red-light); color: var(--red); }
+    .nav-pill.active { background: var(--red); color: var(--white); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(120deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 80px 32px 60px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(227,10,23,0.18) 0%, transparent 60%);
+    }
+    .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; display: flex; align-items: center; gap: 60px; }
+    .hero-text { flex: 1; color: var(--white); }
+    .hero-tag {
+      font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
+      opacity: .7; margin-bottom: 16px;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .hero-tag::before { content: ''; width: 24px; height: 2px; background: var(--red); }
+    .hero-title { font-size: 44px; font-weight: 800; line-height: 1.15; margin-bottom: 18px; }
+    .hero-title span { color: var(--red); }
+    .hero-sub { font-size: 16px; opacity: .8; line-height: 1.7; max-width: 520px; margin-bottom: 32px; }
+    .hero-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+    .chip {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      border: 1.5px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.85);
+    }
+    .chip.red { border-color: var(--red); background: rgba(227,10,23,0.2); }
+    .hero-stats {
+      flex-shrink: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    .hero-stat {
+      background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius); padding: 20px 24px; color: var(--white); text-align: center;
+    }
+    .hero-stat-val { font-size: 32px; font-weight: 800; color: var(--red); }
+    .hero-stat-lbl { font-size: 11px; opacity: .7; margin-top: 4px; letter-spacing: .5px; }
+    .hero-stat-sub { font-size: 10px; opacity: .5; margin-top: 2px; }
+
+    /* ── SECTION NAV ── */
+    .section-nav {
+      background: var(--gray-light); border-bottom: 1px solid var(--gray-mid);
+      position: sticky; top: 64px; z-index: 100;
+    }
+    .section-nav-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 32px;
+      display: flex; gap: 0; overflow-x: auto;
+    }
+    .snav-link {
+      padding: 14px 20px; font-size: 13px; font-weight: 600; color: var(--gray-text);
+      border-bottom: 3px solid transparent; white-space: nowrap;
+      transition: color .15s, border-color .15s;
+    }
+    .snav-link:hover { color: var(--dark); border-bottom-color: var(--gray-mid); }
+    .snav-link.active { color: var(--red); border-bottom-color: var(--red); }
+
+    /* ── MAIN LAYOUT ── */
+    .page-content { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── SECTION BLOCKS ── */
+    .section-block { padding: 72px 0; border-bottom: 1px solid var(--gray-mid); }
+    .section-block:last-child { border-bottom: none; }
+    .section-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--red); margin-bottom: 10px;
+    }
+    .section-heading { font-size: 32px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .section-heading span { color: var(--red); }
+    .section-lead { font-size: 16px; color: var(--gray-text); line-height: 1.7; max-width: 680px; margin-bottom: 40px; }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 24px 28px;
+      border-top: 3px solid var(--gray-mid);
+    }
+    .card.red    { border-top-color: var(--red); }
+    .card.blue   { border-top-color: var(--blue); }
+    .card.purple { border-top-color: var(--purple); }
+    .card.green  { border-top-color: var(--green); }
+
+    /* ── GRID HELPERS ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    .two-col-wide { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: start; }
+
+    /* ── STAT CARD ── */
+    .stat-card { text-align: center; padding: 28px 20px; }
+    .stat-val { font-size: 42px; font-weight: 800; line-height: 1; }
+    .stat-lbl { font-size: 12px; font-weight: 600; color: var(--gray-text); margin-top: 8px; text-transform: uppercase; letter-spacing: .5px; }
+    .stat-sub { font-size: 11px; color: #bbb; margin-top: 4px; }
+    .stat-card.red  .stat-val { color: var(--red); }
+    .stat-card.blue .stat-val { color: var(--blue); }
+    .stat-card.purple .stat-val { color: var(--purple); }
+    .stat-card.green .stat-val { color: var(--green); }
+
+    /* ── DATASET TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    .data-table th {
+      background: var(--dark); color: var(--white);
+      padding: 10px 14px; text-align: left; font-size: 11px;
+      font-weight: 700; letter-spacing: .5px;
+    }
+    .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray-mid); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--gray-light); }
+    .tag-pill {
+      display: inline-block; padding: 2px 8px; border-radius: 10px;
+      font-size: 10px; font-weight: 700;
+    }
+    .tag-pill.main   { background: #fef0f0; color: var(--red); }
+    .tag-pill.bureau { background: #ebf2fd; color: var(--blue); }
+    .tag-pill.prev   { background: #f2ebf7; color: var(--purple); }
+    .tag-pill.cc     { background: #e8f5ef; color: var(--green); }
+
+    /* ── ARCHITECTURE FLOW ── */
+    .arch-flow { display: flex; align-items: center; gap: 0; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+    .arch-node {
+      background: var(--white); border: 2px solid var(--gray-mid);
+      border-radius: 8px; padding: 14px 18px; text-align: center;
+      min-width: 110px; flex-shrink: 0; transition: border-color .15s;
+    }
+    .arch-node:hover { border-color: var(--red); }
+    .arch-node-icon { font-size: 22px; margin-bottom: 6px; }
+    .arch-node-label { font-size: 11px; font-weight: 700; color: var(--dark); }
+    .arch-node-sub { font-size: 10px; color: var(--gray-text); margin-top: 3px; }
+    .arch-node.red { border-color: var(--red); background: var(--red-light); }
+    .arch-node.blue { border-color: var(--blue); background: #ebf2fd; }
+    .arch-node.purple { border-color: var(--purple); background: #f2ebf7; }
+    .arch-node.green { border-color: var(--green); background: #e8f5ef; }
+    .arch-arrow {
+      font-size: 18px; color: var(--gray-text); padding: 0 6px; flex-shrink: 0;
+    }
+
+    /* ── LAYER STACK ── */
+    .layer-stack { display: flex; flex-direction: column; gap: 12px; }
+    .layer {
+      border-radius: 8px; padding: 14px 20px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .layer.l1 { background: linear-gradient(90deg, #fef0f0, var(--white)); border-left: 4px solid var(--red); }
+    .layer.l2 { background: linear-gradient(90deg, #ebf2fd, var(--white)); border-left: 4px solid var(--blue); }
+    .layer.l3 { background: linear-gradient(90deg, #e8f5ef, var(--white)); border-left: 4px solid var(--green); }
+    .layer-icon { font-size: 24px; flex-shrink: 0; }
+    .layer-title { font-size: 13px; font-weight: 700; }
+    .layer-desc { font-size: 12px; color: var(--gray-text); margin-top: 2px; }
+    .layer-badge {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 10px; flex-shrink: 0;
+    }
+    .layer.l1 .layer-badge { background: var(--red-light); color: var(--red); }
+    .layer.l2 .layer-badge { background: #ebf2fd; color: var(--blue); }
+    .layer.l3 .layer-badge { background: #e8f5ef; color: var(--green); }
+
+    /* ── FEATURE BAR CHART ── */
+    .fi-list { display: flex; flex-direction: column; gap: 8px; }
+    .fi-row { display: flex; align-items: center; gap: 10px; }
+    .fi-rank { width: 20px; font-size: 10px; color: #bbb; text-align: right; flex-shrink: 0; }
+    .fi-name { width: 200px; font-size: 12px; font-weight: 600; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .fi-track { flex: 1; height: 14px; background: var(--gray-mid); border-radius: 7px; overflow: hidden; }
+    .fi-fill { height: 100%; border-radius: 7px; background: linear-gradient(90deg, var(--red), #ff6b7a); }
+    .fi-val { width: 50px; font-size: 11px; font-weight: 700; color: var(--red); text-align: right; flex-shrink: 0; }
+
+    /* ── MODEL ARCH DIAGRAM ── */
+    .model-flow { display: flex; flex-direction: column; gap: 10px; }
+    .mf-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .mf-box {
+      padding: 8px 14px; border-radius: 6px; font-size: 11px; font-weight: 700;
+      text-align: center; min-width: 80px;
+    }
+    .mf-box.input  { background: #f0f0f0; color: var(--dark); }
+    .mf-box.static { background: #ebf2fd; color: var(--blue); border: 1.5px solid var(--blue); }
+    .mf-box.seq    { background: #f2ebf7; color: var(--purple); border: 1.5px solid var(--purple); }
+    .mf-box.proc   { background: var(--red-light); color: var(--red); border: 1.5px solid var(--red); }
+    .mf-box.out    { background: var(--dark); color: var(--white); }
+    .mf-box.concat { background: var(--gray-light); color: var(--dark); border: 1.5px dashed var(--gray-text); }
+    .mf-arrow { color: var(--gray-text); font-size: 16px; }
+    .mf-divider { height: 1px; background: var(--gray-mid); flex: 1; margin: 0 8px; }
+
+    /* ── ENSEMBLE FORMULA ── */
+    .formula-box {
+      background: var(--dark); color: var(--white); border-radius: 10px;
+      padding: 28px 32px; text-align: center; margin: 24px 0;
+    }
+    .formula-text { font-size: 24px; font-weight: 700; letter-spacing: 0.5px; }
+    .formula-text .p-ens { color: var(--red); }
+    .formula-text .p-lgbm { color: #6ab0ff; }
+    .formula-text .p-lstm { color: #c99eff; }
+    .formula-sub { font-size: 12px; opacity: .6; margin-top: 10px; }
+
+    /* ── CONFUSION MATRIX ── */
+    .cm-wrap { display: grid; grid-template-columns: auto 1fr 1fr; grid-template-rows: auto 1fr 1fr; gap: 6px; max-width: 400px; }
+    .cm-corner { }
+    .cm-head { font-size: 11px; font-weight: 700; color: var(--gray-text); text-align: center; padding: 6px; }
+    .cm-row-lbl { font-size: 11px; font-weight: 700; color: var(--gray-text); writing-mode: horizontal-tb; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+    .cm-cell { border-radius: 8px; padding: 18px 12px; text-align: center; }
+    .cm-cell.tn, .cm-cell.tp { background: #e8f5ef; }
+    .cm-cell.fp, .cm-cell.fn { background: var(--red-light); }
+    .cm-count { font-size: 22px; font-weight: 800; }
+    .cm-cell.tn .cm-count, .cm-cell.tp .cm-count { color: var(--green); }
+    .cm-cell.fp .cm-count, .cm-cell.fn .cm-count { color: var(--red); }
+    .cm-label { font-size: 10px; color: var(--gray-text); margin-top: 4px; }
+    .cm-pct { font-size: 10px; color: #aaa; }
+
+    /* ── RISK BANDS ── */
+    .risk-bands { display: flex; flex-direction: column; gap: 10px; }
+    .risk-band {
+      display: flex; align-items: center; gap: 16px;
+      padding: 14px 20px; border-radius: 8px;
+    }
+    .risk-band.low    { background: #e8f5ef; border: 1.5px solid var(--green); }
+    .risk-band.medium { background: #fff8e6; border: 1.5px solid var(--yellow); }
+    .risk-band.high   { background: var(--red-light); border: 1.5px solid var(--red); }
+    .risk-range { font-size: 13px; font-weight: 800; min-width: 60px; }
+    .risk-band.low    .risk-range { color: var(--green); }
+    .risk-band.medium .risk-range { color: var(--yellow); }
+    .risk-band.high   .risk-range { color: var(--red); }
+    .risk-verdict { font-size: 13px; font-weight: 700; min-width: 80px; }
+    .risk-desc { font-size: 12px; color: var(--gray-text); }
+    .risk-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .risk-band.low    .risk-dot { background: var(--green); }
+    .risk-band.medium .risk-dot { background: var(--yellow); }
+    .risk-band.high   .risk-dot { background: var(--red); }
+
+    /* ── SPEC LIST ── */
+    .spec-list { display: flex; flex-direction: column; gap: 10px; }
+    .spec-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--gray-mid); }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-key { font-size: 13px; color: var(--gray-text); }
+    .spec-val { font-size: 13px; font-weight: 700; color: var(--dark); }
+    .spec-val.red    { color: var(--red); }
+    .spec-val.blue   { color: var(--blue); }
+    .spec-val.purple { color: var(--purple); }
+    .spec-val.green  { color: var(--green); }
+
+    /* ── HIGHLIGHT BOX ── */
+    .highlight-box {
+      background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+      border-radius: 12px; padding: 32px; color: var(--white); margin-top: 24px;
+    }
+    .highlight-box h3 { font-size: 18px; margin-bottom: 16px; }
+    .highlight-box ul { display: flex; flex-direction: column; gap: 10px; padding-left: 0; }
+    .highlight-box li { font-size: 13px; opacity: .85; line-height: 1.6; padding-left: 20px; position: relative; }
+    .highlight-box li::before { content: '→'; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+    /* ── TECH BADGE ── */
+    .tech-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .tech-badge {
+      padding: 5px 12px; border-radius: 5px; font-size: 11px; font-weight: 700;
+      border: 1.5px solid var(--gray-mid); color: var(--dark);
+    }
+
+    /* ── METRIC COMPARE ── */
+    .compare-bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .compare-bar-label { width: 160px; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+    .compare-bar-track { flex: 1; height: 20px; background: var(--gray-mid); border-radius: 10px; overflow: hidden; position: relative; }
+    .compare-bar-fill { height: 100%; border-radius: 10px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+    .compare-bar-fill span { font-size: 11px; font-weight: 700; color: var(--white); }
+    .compare-bar-fill.lgbm   { background: var(--blue); }
+    .compare-bar-fill.lstm   { background: var(--purple); }
+    .compare-bar-fill.ens    { background: var(--red); }
+
+    /* ── ENDPOINT LIST ── */
+    .endpoint-list { display: flex; flex-direction: column; gap: 10px; }
+    .endpoint-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 16px; border-radius: 8px; background: var(--gray-light);
+    }
+    .ep-method {
+      font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 4px;
+      flex-shrink: 0; min-width: 42px; text-align: center;
+    }
+    .ep-method.get  { background: #e8f5ef; color: var(--green); }
+    .ep-method.post { background: #ebf2fd; color: var(--blue); }
+    .ep-path { font-size: 12px; font-weight: 700; font-family: monospace; min-width: 200px; }
+    .ep-desc { font-size: 12px; color: var(--gray-text); }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--dark); color: rgba(255,255,255,0.5);
+      padding: 40px 32px; text-align: center; font-size: 13px; margin-top: 0;
+    }
+    .footer-logo { font-size: 22px; font-weight: 800; color: var(--white); margin-bottom: 8px; }
+    .footer-sub { font-size: 12px; opacity: .6; margin-bottom: 20px; }
+    .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+    .footer-links a { font-size: 12px; color: rgba(255,255,255,0.4); }
+    .footer-links a:hover { color: var(--red); }
+
+    @media (max-width: 900px) {
+      .two-col, .two-col-wide { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .hero-inner { flex-direction: column; }
+      .hero-stats { grid-template-columns: repeat(4, 1fr); }
+      .fi-name { width: 130px; }
+    }
+    @media (max-width: 600px) {
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+      .hero-stats { grid-template-columns: repeat(2, 1fr); }
+      .hero-title { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <div class="logo-mark">Akbank</div>
+    <div class="nav-breadcrumb">
+      <a href="akbank-homepage.html">Ana Sayfa</a>
+      <span class="sep">›</span>
+      <span class="current">Home Credit Risk — Proje Detayları</span>
+    </div>
+    <div class="nav-pills">
+      <a class="nav-pill" href="credit_risk_dashboard_akbank.html">Risk Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-tag">Yapay Zeka · Kredi Risk Modelleme</div>
+      <h1 class="hero-title">Home Credit<br><span>Temerrüt Risk</span><br>Sistemi</h1>
+      <p class="hero-sub">LightGBM + LSTM hibrit ensemble mimarisiyle müşteri kredi temerrüt riskini gerçek zamanlı tahmin eden uçtan uca makine öğrenmesi platformu.</p>
+      <div class="hero-chips">
+        <span class="chip red">Ensemble AUC 0.9114</span>
+        <span class="chip">5-Fold CV</span>
+        <span class="chip">50 Özellik</span>
+        <span class="chip">FastAPI + PyTorch</span>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val">0.9114</div>
+        <div class="hero-stat-lbl">Ensemble AUC</div>
+        <div class="hero-stat-sub">Holdout test seti</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">307K</div>
+        <div class="hero-stat-lbl">Eğitim Örneği</div>
+        <div class="hero-stat-sub">Home Credit veri seti</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">50</div>
+        <div class="hero-stat-lbl">Özellik Sayısı</div>
+        <div class="hero-stat-sub">Gain bazlı seçim</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">23</div>
+        <div class="hero-stat-lbl">Test — Tümü Geçti</div>
+        <div class="hero-stat-sub">pytest · 1.53s</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION NAV ── -->
+<nav class="section-nav">
+  <div class="section-nav-inner">
+    <a class="snav-link active" href="#problem">Problem & Veri Seti</a>
+    <a class="snav-link" href="#architecture">Sistem Mimarisi</a>
+    <a class="snav-link" href="#lgbm">LightGBM</a>
+    <a class="snav-link" href="#lstm">LSTM Hibrit</a>
+    <a class="snav-link" href="#ensemble">Ensemble & Sonuçlar</a>
+  </div>
+</nav>
+
+<div class="page-content">
+
+  <!-- ════════════════════════════════════
+       1. PROBLEM TANIMI & VERİ SETİ
+  ════════════════════════════════════ -->
+  <section id="problem" class="section-block">
+    <div class="section-eyebrow">01 — Problem Tanımı & Veri Seti</div>
+    <h2 class="section-heading">Kredi Temerrüdü Neden <span>Öngörülmeli?</span></h2>
+    <p class="section-lead">Home Credit Group, geleneksel bankacılığa erişimi olmayan bireylere kredi sunmaktadır. Kredi geçmişi yetersiz müşterilerin temerrüt riskini doğru değerlendirmek — hem finansal kapsayıcılığı artırmak hem de kurumsal riski yönetmek — açısından kritik öneme sahiptir.</p>
+
+    <div class="two-col-wide">
+
+      <!-- Sol: Veri tablosu -->
+      <div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Veri Seti Yapısı</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tablo</th>
+              <th>Satır</th>
+              <th>Sütun</th>
+              <th>Tür</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>application_train</strong></td>
+              <td>307.511</td>
+              <td>122</td>
+              <td><span class="tag-pill main">Ana Tablo</span></td>
+            </tr>
+            <tr>
+              <td>bureau</td>
+              <td>1.716.428</td>
+              <td>17</td>
+              <td><span class="tag-pill bureau">Büro</span></td>
+            </tr>
+            <tr>
+              <td>bureau_balance</td>
+              <td>27.299.925</td>
+              <td>3</td>
+              <td><span class="tag-pill bureau">Büro</span></td>
+            </tr>
+            <tr>
+              <td>previous_application</td>
+              <td>1.670.214</td>
+              <td>37</td>
+              <td><span class="tag-pill prev">Önceki Başvuru</span></td>
+            </tr>
+            <tr>
+              <td>installments_payments</td>
+              <td>13.605.401</td>
+              <td>8</td>
+              <td><span class="tag-pill prev">Taksit</span></td>
+            </tr>
+            <tr>
+              <td>credit_card_balance</td>
+              <td>3.840.312</td>
+              <td>23</td>
+              <td><span class="tag-pill cc">Kredi Kartı</span></td>
+            </tr>
+            <tr>
+              <td>POS_CASH_balance</td>
+              <td>10.001.358</td>
+              <td>8</td>
+              <td><span class="tag-pill cc">POS/Nakit</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top:20px;padding:16px 20px;background:var(--gray-light);border-radius:8px;font-size:13px;line-height:1.7;">
+          <strong>Hedef Değişken:</strong> <code style="background:#e0e0e0;padding:1px 6px;border-radius:3px;">TARGET</code>
+          — 1 = Temerrüt, 0 = Ödedi<br>
+          <strong>Dengesizlik:</strong> %8.07 temerrüt oranı → stratified CV zorunlu
+        </div>
+      </div>
+
+      <!-- Sağ: Problem detayları -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="card red">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Projenin Kapsamı</div>
+          <div class="spec-list">
+            <div class="spec-row"><span class="spec-key">Görev Tipi</span><span class="spec-val">İkili Sınıflandırma</span></div>
+            <div class="spec-row"><span class="spec-key">Metrik</span><span class="spec-val red">ROC-AUC</span></div>
+            <div class="spec-row"><span class="spec-key">Eğitim Seti</span><span class="spec-val">307.511 kayıt</span></div>
+            <div class="spec-row"><span class="spec-key">Holdout Seti</span><span class="spec-val">122.005 kayıt</span></div>
+            <div class="spec-row"><span class="spec-key">Temerrüt Oranı</span><span class="spec-val red">%8.07</span></div>
+            <div class="spec-row"><span class="spec-key">Kaynak</span><span class="spec-val">Home Credit Group</span></div>
+          </div>
+        </div>
+
+        <div class="card blue">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Özellik Mühendisliği</div>
+          <div class="spec-list">
+            <div class="spec-row"><span class="spec-key">Ham özellik</span><span class="spec-val">122</span></div>
+            <div class="spec-row"><span class="spec-key">Türetilmiş özellik</span><span class="spec-val">~200+</span></div>
+            <div class="spec-row"><span class="spec-key">Model girişi (top-50)</span><span class="spec-val blue">50</span></div>
+            <div class="spec-row"><span class="spec-key">Seçim yöntemi</span><span class="spec-val">LGBM Gain Bazlı</span></div>
+            <div class="spec-row"><span class="spec-key">Kodlama</span><span class="spec-val">FoldEncoder (k-fold target mean)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════
+       2. SİSTEM MİMARİSİ
+  ════════════════════════════════════ -->
+  <section id="architecture" class="section-block">
+    <div class="section-eyebrow">02 — Sistem Mimarisi</div>
+    <h2 class="section-heading">Uçtan Uca <span>Üç Katmanlı</span> Platform</h2>
+    <p class="section-lead">Sistem; veri işleme ve model eğitiminden REST API servisine, oradan etkileşimli kullanıcı arayüzüne uzanan entegre bir pipeline üzerinde çalışmaktadır.</p>
+
+    <!-- Ana akış -->
+    <div style="background:var(--gray-light);border-radius:12px;padding:32px;margin-bottom:32px;">
+      <div style="font-size:13px;font-weight:700;color:var(--gray-text);margin-bottom:20px;text-align:center;letter-spacing:1px;text-transform:uppercase;">Tahmin Akışı</div>
+      <div class="arch-flow">
+        <div class="arch-node">
+          <div class="arch-node-icon">📂</div>
+          <div class="arch-node-label">Ham Veri</div>
+          <div class="arch-node-sub">7 tablo</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node blue">
+          <div class="arch-node-icon">⚙️</div>
+          <div class="arch-node-label">Feature Pipeline</div>
+          <div class="arch-node-sub">50 özellik</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node red">
+          <div class="arch-node-icon">🌲</div>
+          <div class="arch-node-label">LightGBM</div>
+          <div class="arch-node-sub">AUC 0.8783</div>
+        </div>
+        <div class="arch-arrow">+</div>
+        <div class="arch-node purple">
+          <div class="arch-node-icon">🧠</div>
+          <div class="arch-node-label">LSTM Hibrit</div>
+          <div class="arch-node-sub">AUC 0.8914</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node green">
+          <div class="arch-node-icon">⚡</div>
+          <div class="arch-node-label">Ensemble</div>
+          <div class="arch-node-sub">AUC 0.9114</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node">
+          <div class="arch-node-icon">🔌</div>
+          <div class="arch-node-label">FastAPI</div>
+          <div class="arch-node-sub">3 endpoint</div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node red">
+          <div class="arch-node-icon">📊</div>
+          <div class="arch-node-label">Dashboard</div>
+          <div class="arch-node-sub">HTML/CSS/JS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 katman -->
+    <div class="grid-3" style="margin-bottom:32px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--red);">● Model Katmanı</div>
+        <div class="layer-stack">
+          <div class="layer l1">
+            <div class="layer-icon">🌲</div>
+            <div><div class="layer-title">LightGBM</div><div class="layer-desc">Gradient Boosting, 5-fold CV</div></div>
+            <div class="layer-badge">pkl</div>
+          </div>
+          <div class="layer l2">
+            <div class="layer-icon">🧠</div>
+            <div><div class="layer-title">HybridLSTM</div><div class="layer-desc">Statik + Sekans, Attention</div></div>
+            <div class="layer-badge">.pt</div>
+          </div>
+          <div class="layer l3">
+            <div class="layer-icon">⚡</div>
+            <div><div class="layer-title">Ensemble</div><div class="layer-desc">Ağırlıklı ortalama (OOF)</div></div>
+            <div class="layer-badge">pkl</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--blue);">● API Katmanı</div>
+        <div class="endpoint-list">
+          <div class="endpoint-row"><span class="ep-method get">GET</span><span class="ep-path">/health</span><span class="ep-desc">Model durumu</span></div>
+          <div class="endpoint-row"><span class="ep-method post">POST</span><span class="ep-path">/api/predict</span><span class="ep-desc">Risk tahmini</span></div>
+          <div class="endpoint-row"><span class="ep-method post">POST</span><span class="ep-path">/api/explain</span><span class="ep-desc">Özellik açıkla</span></div>
+          <div class="endpoint-row"><span class="ep-method get">GET</span><span class="ep-path">/api/features/top50</span><span class="ep-desc">Özellik listesi</span></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--green);">● Arayüz Katmanı</div>
+        <div class="layer-stack">
+          <div class="layer l3">
+            <div class="layer-icon">📊</div>
+            <div><div class="layer-title">Risk Dashboard</div><div class="layer-desc">Self-contained HTML, SVG gauge</div></div>
+          </div>
+          <div class="layer l3">
+            <div class="layer-icon">🏠</div>
+            <div><div class="layer-title">Akbank Anasayfa</div><div class="layer-desc">Akbank temalı landing page</div></div>
+          </div>
+          <div class="layer l3">
+            <div class="layer-icon">📄</div>
+            <div><div class="layer-title">Proje Detayları</div><div class="layer-desc">Bu sayfa</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech stack -->
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;">Teknoloji Yığını</div>
+      <div class="tech-badges">
+        <span class="tech-badge" style="border-color:#4b8bbe;color:#4b8bbe;">Python 3.10+</span>
+        <span class="tech-badge" style="border-color:#e8a000;color:#e8a000;">LightGBM</span>
+        <span class="tech-badge" style="border-color:#ee4c2c;color:#ee4c2c;">PyTorch</span>
+        <span class="tech-badge" style="border-color:#f38020;color:#f38020;">FastAPI</span>
+        <span class="tech-badge" style="border-color:#1a8c4e;color:#1a8c4e;">scikit-learn</span>
+        <span class="tech-badge" style="border-color:#3a7bd5;color:#3a7bd5;">pandas · numpy</span>
+        <span class="tech-badge" style="border-color:#8e44ad;color:#8e44ad;">Pydantic v2</span>
+        <span class="tech-badge">pytest · httpx</span>
+        <span class="tech-badge">uvicorn</span>
+        <span class="tech-badge">PyYAML</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════
+       3. LightGBM
+  ════════════════════════════════════ -->
+  <section id="lgbm" class="section-block">
+    <div class="section-eyebrow">03 — LightGBM Modeli</div>
+    <h2 class="section-heading">Gradient Boosting <span>Temel Model</span></h2>
+    <p class="section-lead">Gradient Boosting Decision Tree yaklaşımıyla eğitilen LightGBM, 50 özellik ve 5-fold stratified cross-validation ile 0.8783 holdout AUC değerine ulaşmıştır.</p>
+
+    <div class="two-col" style="gap:40px;">
+      <!-- Sol: özellikler + spec -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
+
+        <div class="card red">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px;">Model Parametreleri</div>
+          <div class="spec-list">
+            <div class="spec-row"><span class="spec-key">Algoritma</span><span class="spec-val">LightGBM (GBDT)</span></div>
+            <div class="spec-row"><span class="spec-key">Özellik sayısı</span><span class="spec-val red">50</span></div>
+            <div class="spec-row"><span class="spec-key">CV Stratejisi</span><span class="spec-val">5-fold Stratified</span></div>
+            <div class="spec-row"><span class="spec-key">Holdout AUC</span><span class="spec-val red">0.8783</span></div>
+            <div class="spec-row"><span class="spec-key">Karar Eşiği</span><span class="spec-val">0.30</span></div>
+            <div class="spec-row"><span class="spec-key">Model Dosyası</span><span class="spec-val" style="font-size:11px;font-family:monospace;">lgbm_top50_cv5_...pkl</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Kritik Tasarım Kararları</div>
+          <ul style="display:flex;flex-direction:column;gap:10px;padding-left:0;">
+            <li style="font-size:13px;line-height:1.6;padding-left:20px;position:relative;color:var(--gray-text);">
+              <span style="position:absolute;left:0;color:var(--red);font-weight:700;">→</span>
+              <strong>NaN politikası:</strong> LightGBM natif NaN işler — <code style="background:#f0f0f0;padding:1px 5px;border-radius:3px;">fillna(0)</code> uygulanmaz. Bu sayede AUC 0.819'dan 0.878'e çıktı.
+            </li>
+            <li style="font-size:13px;line-height:1.6;padding-left:20px;position:relative;color:var(--gray-text);">
+              <span style="position:absolute;left:0;color:var(--red);font-weight:700;">→</span>
+              <strong>FoldEncoder:</strong> Kategorik değişkenlere k-fold target mean encoding — veri sızıntısı önlenir.
+            </li>
+            <li style="font-size:13px;line-height:1.6;padding-left:20px;position:relative;color:var(--gray-text);">
+              <span style="position:absolute;left:0;color:var(--red);font-weight:700;">→</span>
+              <strong>None → NaN:</strong> <code style="background:#f0f0f0;padding:1px 5px;border-radius:3px;">pd.DataFrame([row], dtype=np.float64)</code> ile Python <code style="background:#f0f0f0;padding:1px 5px;border-radius:3px;">None</code> değerleri güvenli şekilde <code style="background:#f0f0f0;padding:1px 5px;border-radius:3px;">np.nan</code>'a dönüştürülür.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sağ: Feature importance bar chart -->
+      <div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Top-10 Özellik <span style="color:var(--gray-text);font-size:12px;font-weight:400;">— LGBM Gain Bazlı</span></div>
+        <div class="fi-list">
+          <div class="fi-row"><span class="fi-rank">1</span><span class="fi-name">EXT_SOURCE_MEAN</span><div class="fi-track"><div class="fi-fill" style="width:100%"></div></div><span class="fi-val">184.5K</span></div>
+          <div class="fi-row"><span class="fi-rank">2</span><span class="fi-name">CREDIT_TERM</span><div class="fi-track"><div class="fi-fill" style="width:72%"></div></div><span class="fi-val">133.0K</span></div>
+          <div class="fi-row"><span class="fi-rank">3</span><span class="fi-name">EXT_SOURCE_3</span><div class="fi-track"><div class="fi-fill" style="width:70%"></div></div><span class="fi-val">128.8K</span></div>
+          <div class="fi-row"><span class="fi-rank">4</span><span class="fi-name">b_avg_utilization</span><div class="fi-track"><div class="fi-fill" style="width:61%"></div></div><span class="fi-val">112.9K</span></div>
+          <div class="fi-row"><span class="fi-rank">5</span><span class="fi-name">EXT_SOURCE_1</span><div class="fi-track"><div class="fi-fill" style="width:59%"></div></div><span class="fi-val">108.6K</span></div>
+          <div class="fi-row"><span class="fi-rank">6</span><span class="fi-name">EXT_SOURCE_2</span><div class="fi-track"><div class="fi-fill" style="width:57%"></div></div><span class="fi-val">105.3K</span></div>
+          <div class="fi-row"><span class="fi-rank">7</span><span class="fi-name">DAYS_EMPLOYED_PERCENT</span><div class="fi-track"><div class="fi-fill" style="width:50%"></div></div><span class="fi-val">91.8K</span></div>
+          <div class="fi-row"><span class="fi-rank">8</span><span class="fi-name">DAYS_EMPLOYED</span><div class="fi-track"><div class="fi-fill" style="width:47%"></div></div><span class="fi-val">86.8K</span></div>
+          <div class="fi-row"><span class="fi-rank">9</span><span class="fi-name">int_max_ins_days_late</span><div class="fi-track"><div class="fi-fill" style="width:43%"></div></div><span class="fi-val">79.6K</span></div>
+          <div class="fi-row"><span class="fi-rank">10</span><span class="fi-name">b_avg_loan_duration</span><div class="fi-track"><div class="fi-fill" style="width:41%"></div></div><span class="fi-val">75.2K</span></div>
+        </div>
+        <div style="margin-top:20px;padding:14px 16px;background:var(--gray-light);border-radius:8px;font-size:12px;color:var(--gray-text);line-height:1.6;">
+          <strong>Not:</strong> EXT_SOURCE (harici kredi bürosu) skorları modelde baskın konumda. Büro kullanım oranı ve istihdam süresi önemli ikincil özellikler olarak öne çıktı.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════
+       4. LSTM HİBRİT MODEL
+  ════════════════════════════════════ -->
+  <section id="lstm" class="section-block">
+    <div class="section-eyebrow">04 — LSTM Hibrit Dizi Modeli</div>
+    <h2 class="section-heading">Statik + Sekans <span>Hibrit Mimari</span></h2>
+    <p class="section-lead">HybridLSTMClassifier, müşterinin statik özelliklerini ve önceki kredi başvurularının zaman serilerini eş zamanlı işleyen çift dallı bir derin öğrenme mimarisidir. Scaled Dot-Product Attention mekanizmasıyla geçmişin kritik noktalarına odaklanır.</p>
+
+    <div class="two-col" style="gap:40px;">
+      <!-- Sol: mimari diyagram -->
+      <div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:20px;">Model Akış Diyagramı</div>
+        <div style="background:var(--gray-light);border-radius:12px;padding:28px;">
+          <div class="model-flow">
+            <!-- Girişler -->
+            <div class="mf-row">
+              <div class="mf-box input" style="min-width:130px;">Statik Özellikler<br><span style="font-size:9px;font-weight:400;opacity:.7;">(50 özellik · encoded)</span></div>
+              <div style="width:40px;"></div>
+              <div class="mf-box input" style="min-width:130px;">Sekans Verisi<br><span style="font-size:9px;font-weight:400;opacity:.7;">(max 10 başvuru)</span></div>
+            </div>
+            <!-- Ok aşağı -->
+            <div class="mf-row">
+              <div class="mf-arrow" style="margin-left:65px;">↓</div>
+              <div style="width:40px;"></div>
+              <div class="mf-arrow" style="margin-left:65px;">↓</div>
+            </div>
+            <!-- İşlem katmanları -->
+            <div class="mf-row">
+              <div class="mf-box static" style="min-width:130px;">FC + BatchNorm<br>+ Dropout<br><span style="font-size:9px;">(Static Branch)</span></div>
+              <div style="width:40px;"></div>
+              <div class="mf-box seq" style="min-width:130px;">LSTM Layer<br>→ Scaled Dot<br>Attention</div>
+            </div>
+            <div class="mf-row">
+              <div class="mf-arrow" style="margin-left:65px;">↓</div>
+              <div style="width:40px;"></div>
+              <div class="mf-arrow" style="margin-left:65px;">↓</div>
+            </div>
+            <!-- Concat -->
+            <div class="mf-row">
+              <div style="flex:1;border-top:2px dashed var(--gray-text);margin-top:10px;"></div>
+              <div class="mf-box concat" style="min-width:180px;">Concat<br><span style="font-size:9px;">Static Repr + Attended Seq</span></div>
+              <div style="flex:1;border-top:2px dashed var(--gray-text);margin-top:10px;"></div>
+            </div>
+            <div class="mf-row"><div class="mf-arrow">↓</div></div>
+            <!-- FC + çıkış -->
+            <div class="mf-row">
+              <div class="mf-box proc" style="min-width:200px;">Fully Connected<br>+ Dropout</div>
+            </div>
+            <div class="mf-row"><div class="mf-arrow">↓</div></div>
+            <div class="mf-row">
+              <div class="mf-box out" style="min-width:200px;">Logit → Sigmoid → P_lstm</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sağ: spec + teknik detaylar -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="card purple">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px;">Model Parametreleri</div>
+          <div class="spec-list">
+            <div class="spec-row"><span class="spec-key">Mimari</span><span class="spec-val">Statik + Sekans Hibrit</span></div>
+            <div class="spec-row"><span class="spec-key">Dikkat Mekanizması</span><span class="spec-val purple">Scaled Dot-Product</span></div>
+            <div class="spec-row"><span class="spec-key">Max Sekans Uzunluğu</span><span class="spec-val">10 başvuru</span></div>
+            <div class="spec-row"><span class="spec-key">Eğitim Stratejisi</span><span class="spec-val">5-fold OOF</span></div>
+            <div class="spec-row"><span class="spec-key">Holdout AUC</span><span class="spec-val purple">0.8914</span></div>
+            <div class="spec-row"><span class="spec-key">Karar Eşiği</span><span class="spec-val">0.6086</span></div>
+            <div class="spec-row"><span class="spec-key">Model Dosyası</span><span class="spec-val" style="font-size:11px;font-family:monospace;">lstm_oof_cv5_...pt</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">Checkpoint İçeriği</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;font-size:12px;padding:8px 12px;background:var(--gray-light);border-radius:6px;">
+              <span style="color:var(--purple);font-weight:700;">●</span>
+              <span><code style="background:#e8e0ee;padding:1px 5px;border-radius:3px;">state_dict</code> — PyTorch model ağırlıkları</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:12px;padding:8px 12px;background:var(--gray-light);border-radius:6px;">
+              <span style="color:var(--purple);font-weight:700;">●</span>
+              <span><code style="background:#e8e0ee;padding:1px 5px;border-radius:3px;">static_scaler</code> — StandardScaler (statik)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:12px;padding:8px 12px;background:var(--gray-light);border-radius:6px;">
+              <span style="color:var(--purple);font-weight:700;">●</span>
+              <span><code style="background:#e8e0ee;padding:1px 5px;border-radius:3px;">seq_scaler</code> — Sekans normalleştirici</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:12px;padding:8px 12px;background:var(--gray-light);border-radius:6px;">
+              <span style="color:var(--purple);font-weight:700;">●</span>
+              <span><code style="background:#e8e0ee;padding:1px 5px;border-radius:3px;">encoder + categorical_maps</code> — FoldEncoder durumu</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:16px 20px;background:var(--gray-light);border-radius:8px;border-left:4px solid var(--yellow);font-size:12px;color:var(--gray-text);line-height:1.7;">
+          <strong style="color:var(--dark);">OpenMP Çakışması Çözümü:</strong> LightGBM + PyTorch aynı süreçte yüklenince segfault (exit 139) oluşuyordu. Çözüm: her ikisi modül seviyesinde import edildi + <code style="background:#e0e0e0;padding:1px 5px;border-radius:3px;">KMP_DUPLICATE_LIB_OK=TRUE</code>, <code style="background:#e0e0e0;padding:1px 5px;border-radius:3px;">OMP_NUM_THREADS=1</code>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════
+       5. ENSEMBLE & SONUÇLAR
+  ════════════════════════════════════ -->
+  <section id="ensemble" class="section-block">
+    <div class="section-eyebrow">05 — Ensemble Model & Sonuçlar</div>
+    <h2 class="section-heading">İki Modelin <span>Gücünü Birleştir</span></h2>
+    <p class="section-lead">LightGBM'nin yapısal örüntü gücü ile LSTM'nin zaman serisi belleği ağırlıklı ortalama ile birleştirildi. OOF tahminleri üzerinde optimize edilen ağırlıklar, holdout setinde <strong>0.9114 AUC</strong> değerine ulaştı.</p>
+
+    <!-- Ensemble formül -->
+    <div class="formula-box">
+      <div class="formula-text">
+        <span class="p-ens">P<sub style="font-size:14px;">ensemble</sub></span>
+        &nbsp;=&nbsp;
+        <span style="opacity:.7">0.55</span> × <span class="p-lgbm">P<sub style="font-size:14px;">LightGBM</sub></span>
+        &nbsp;+&nbsp;
+        <span style="opacity:.7">0.45</span> × <span class="p-lstm">P<sub style="font-size:14px;">LSTM</sub></span>
+      </div>
+      <div class="formula-sub">Ağırlıklar 492.017 OOF tahmini üzerinde optimize edildi · Karar eşiği: 0.6322</div>
+    </div>
+
+    <div class="two-col" style="gap:40px;">
+      <!-- Sol: Metrikler + confusion matrix -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
+
+        <!-- Model karşılaştırma -->
+        <div class="card green">
+          <div style="font-size:13px;font-weight:700;margin-bottom:16px;">Model Karşılaştırması — Holdout AUC</div>
+          <div class="compare-bar-row">
+            <span class="compare-bar-label" style="color:var(--blue);">LightGBM (top-50)</span>
+            <div class="compare-bar-track">
+              <div class="compare-bar-fill lgbm" style="width:96.4%"><span>0.8783</span></div>
+            </div>
+          </div>
+          <div class="compare-bar-row">
+            <span class="compare-bar-label" style="color:var(--purple);">LSTM Hibrit (OOF)</span>
+            <div class="compare-bar-track">
+              <div class="compare-bar-fill lstm" style="width:97.8%"><span>0.8914</span></div>
+            </div>
+          </div>
+          <div class="compare-bar-row">
+            <span class="compare-bar-label" style="color:var(--red);">Ensemble</span>
+            <div class="compare-bar-track">
+              <div class="compare-bar-fill ens" style="width:100%"><span>0.9114</span></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--gray-text);margin-top:10px;">Çubuklar göreli ölçeklendirilmiştir (0.87 baz alınarak).</div>
+        </div>
+
+        <!-- Confusion matrix -->
+        <div class="card">
+          <div style="font-size:13px;font-weight:700;margin-bottom:16px;">Confusion Matrix <span style="color:var(--gray-text);font-size:11px;font-weight:400;">— Holdout, 122.005 örnek, eşik: 0.6322</span></div>
+          <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:start;">
+            <div class="cm-wrap">
+              <div></div>
+              <div class="cm-head">Tahmin: 0</div>
+              <div class="cm-head">Tahmin: 1</div>
+              <div class="cm-row-lbl">Gerçek: 0</div>
+              <div class="cm-cell tn">
+                <div class="cm-count">108.469</div>
+                <div class="cm-label">True Negative</div>
+                <div class="cm-pct">88.9%</div>
+              </div>
+              <div class="cm-cell fp">
+                <div class="cm-count">4.606</div>
+                <div class="cm-label">False Positive</div>
+                <div class="cm-pct">3.8%</div>
+              </div>
+              <div class="cm-row-lbl">Gerçek: 1</div>
+              <div class="cm-cell fn">
+                <div class="cm-count">4.130</div>
+                <div class="cm-label">False Negative</div>
+                <div class="cm-pct">3.4%</div>
+              </div>
+              <div class="cm-cell tp">
+                <div class="cm-count">5.800</div>
+                <div class="cm-label">True Positive</div>
+                <div class="cm-pct">4.8%</div>
+              </div>
+            </div>
+            <div class="spec-list" style="flex:1;min-width:140px;">
+              <div class="spec-row"><span class="spec-key">Accuracy</span><span class="spec-val green">93.67%</span></div>
+              <div class="spec-row"><span class="spec-key">Precision</span><span class="spec-val">55.74%</span></div>
+              <div class="spec-row"><span class="spec-key">Recall</span><span class="spec-val">58.40%</span></div>
+              <div class="spec-row"><span class="spec-key">F1 Score</span><span class="spec-val red">0.5704</span></div>
+              <div class="spec-row"><span class="spec-key">KS İstatistiği</span><span class="spec-val">0.682</span></div>
+              <div class="spec-row"><span class="spec-key">AUC</span><span class="spec-val red">0.9114</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sağ: Risk bantları + özet metrikler -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
+
+        <div class="grid-2" style="gap:16px;">
+          <div class="card stat-card red">
+            <div class="stat-val">0.9114</div>
+            <div class="stat-lbl">Ensemble AUC</div>
+            <div class="stat-sub">Holdout test seti</div>
+          </div>
+          <div class="card stat-card green">
+            <div class="stat-val">0.682</div>
+            <div class="stat-lbl">KS İstatistiği</div>
+            <div class="stat-sub">Ayırt edicilik gücü</div>
+          </div>
+          <div class="card stat-card blue">
+            <div class="stat-val">0.5704</div>
+            <div class="stat-lbl">F1 Score</div>
+            <div class="stat-sub">Eşik: 0.6322</div>
+          </div>
+          <div class="card stat-card purple">
+            <div class="stat-val">93.67%</div>
+            <div class="stat-lbl">Accuracy</div>
+            <div class="stat-sub">Holdout doğruluğu</div>
+          </div>
+        </div>
+
+        <!-- Risk bandı -->
+        <div class="card">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px;">Risk Bandı Sistemi</div>
+          <div class="risk-bands">
+            <div class="risk-band low">
+              <div class="risk-dot"></div>
+              <div class="risk-range">0 – 29</div>
+              <div class="risk-verdict">✓ ONAYLA</div>
+              <div class="risk-desc">Düşük risk — kredi onayı önerilir</div>
+            </div>
+            <div class="risk-band medium">
+              <div class="risk-dot"></div>
+              <div class="risk-range">30 – 69</div>
+              <div class="risk-verdict">⚑ İNCELE</div>
+              <div class="risk-desc">Orta risk — manuel inceleme gerekir</div>
+            </div>
+            <div class="risk-band high">
+              <div class="risk-dot"></div>
+              <div class="risk-range">70 – 100</div>
+              <div class="risk-verdict">✕ REDDET</div>
+              <div class="risk-desc">Yüksek risk — kredi reddi önerilir</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);border:none;">
+          <div style="color:var(--white);font-size:13px;font-weight:700;margin-bottom:12px;">Ensemble Avantajı</div>
+          <ul style="display:flex;flex-direction:column;gap:8px;padding-left:0;">
+            <li style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.6;padding-left:18px;position:relative;">
+              <span style="position:absolute;left:0;color:var(--red);">→</span>
+              LightGBM tablolu özellikler için güçlü; LSTM geçmiş başvuru sekanslarını işler.
+            </li>
+            <li style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.6;padding-left:18px;position:relative;">
+              <span style="position:absolute;left:0;color:var(--red);">→</span>
+              İki modelin hataları kısmen örtüşmez — birleşim toplam AUC'yi +3.3 puan artırır.
+            </li>
+            <li style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.6;padding-left:18px;position:relative;">
+              <span style="position:absolute;left:0;color:var(--red);">→</span>
+              Önceki başvuru verisi yoksa yalnızca LGBM modu devreye girer (eşik: 0.30).
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-content -->
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-logo">Akbank</div>
+  <div class="footer-sub">Risk Analitik · Home Credit Temerrüt Risk Sistemi · Model ID: ensemble_top50_lstm_20260422 · © 2026</div>
+  <div class="footer-links">
+    <a href="akbank-homepage.html">Ana Sayfa</a>
+    <a href="credit_risk_dashboard_akbank.html">Risk Dashboard</a>
+    <a href="homecredit_project_details.html">Proje Detayları</a>
+  </div>
+</footer>
+
+<script>
+  /* Section nav aktif bağlantı güncelleme */
+  const sections = document.querySelectorAll('.section-block');
+  const navLinks = document.querySelectorAll('.snav-link');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector('.snav-link[href="#' + e.target.id + '"]');
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

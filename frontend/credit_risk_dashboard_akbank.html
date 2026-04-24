@@ -462,7 +462,7 @@
       </div>
     </div>
     <div class="nav-links">
-      <a href="akbank-homepage.html">Ana Sayfa</a>
+      <a href="akbank-homepage.html">← Ana Sayfa</a>
       <a href="#metrics" class="active">Genel Bakış</a>
       <a href="#scoring">Risk Değerlendirme</a>
     </div>
@@ -524,8 +524,9 @@
 
         <!-- Araç çubuğu -->
         <div class="form-toolbar">
-          <button class="btn btn-outline" onclick="autofillDemo()">Demo Doldur</button>
-          <button class="btn btn-outline" onclick="autofillHighRisk()">Yüksek Risk Demo</button>
+          <button class="btn btn-outline" style="color:#1a8c4e;border-color:#1a8c4e;" onclick="autofillLowRisk()">Az Risk Demo</button>
+          <button class="btn btn-outline" style="color:#e8a000;border-color:#e8a000;" onclick="autofillMediumRisk()">Orta Risk Demo</button>
+          <button class="btn btn-outline" style="color:#E30A17;border-color:#E30A17;" onclick="autofillHighRisk()">Yüksek Risk Demo</button>
           <label class="upload-label" title="JSON veya metin dosyası yükle">
             📂 Dosya Yükle
             <input type="file" accept=".json,.txt" style="display:none" onchange="parseUploadedFile(event)">
@@ -1138,18 +1139,61 @@ function fillFromValues(values) {
   recalcDerived(); // kaynak alanlar doldurulunca türetilmiş alanları güncelle
 }
 
-function autofillDemo() {
-  const vals = {};
-  FEATURES.forEach(([,key,,,,,, demo]) => { vals[key] = demo; });
-  fillFromValues(vals);
-  showToast('Demo verisi yüklendi.', 'success');
+function autofillLowRisk() {
+  fillFromValues({
+    EXT_SOURCE_MEAN: 0.73, EXT_SOURCE_1: 0.76, EXT_SOURCE_2: 0.71, EXT_SOURCE_3: 0.70,
+    CREDIT_TERM: 24, b_avg_utilization: 0.12, DAYS_EMPLOYED: 3650,
+    int_max_ins_days_late_ever: 0, b_avg_loan_duration: 36,
+    int_avg_payment_performance: 0.99, ANNUITY_INCOME_RATIO: 0.07,
+    TOTALAREA_MODE: 0.12, AMT_CREDIT: 140000, AMT_GOODS_PRICE: 135000,
+    REGION_POPULATION_RELATIVE: 0.04, AGE_YEARS: 45,
+    CREDIT_INCOME_RATIO: 1.58, int_total_remaining_debt: 18000,
+    OWN_CAR_AGE: 4, DAYS_BIRTH: -16425, DAYS_ID_PUBLISH: -1460,
+    DAYS_LAST_PHONE_CHANGE: -730, DAYS_REGISTRATION: -4380,
+    BASEMENTAREA_MODE: 0.09, INCOME_PER_PERSON: 80000,
+    b_total_history_months: 96, int_total_prev_loans_count: 5,
+    cc_total_avg_utilization_ratio: 0.08, AMT_INCOME_TOTAL: 120000,
+    cc_total_credit_card_experience_months: 36, b_active_loan_count: 1,
+    b_closed_loan_count: 3, ORGANIZATION_TYPE_ENC: 5,
+    NAME_EDUCATION_TYPE_ENC: 3, OCCUPATION_TYPE_ENC: 4,
+    HOUR_APPR_PROCESS_START: 10, cc_avg_repayment_performance: 0.99,
+    CODE_GENDER_ENC: 0, cc_max_balance_ever: 45000,
+    cc_total_current_debt: 1500, b_total_current_debt: 20000,
+    int_total_remaining_installments: 10, AMT_ANNUITY: 7000,
+  });
+  showToast('Az risk demo verisi yüklendi.', 'success');
+}
+
+function autofillMediumRisk() {
+  fillFromValues({
+    EXT_SOURCE_MEAN: 0.46, EXT_SOURCE_1: 0.48, EXT_SOURCE_2: 0.44, EXT_SOURCE_3: 0.42,
+    CREDIT_TERM: 48, b_avg_utilization: 0.55, DAYS_EMPLOYED: 730,
+    int_max_ins_days_late_ever: 12, b_avg_loan_duration: 18,
+    int_avg_payment_performance: 0.84, ANNUITY_INCOME_RATIO: 0.22,
+    TOTALAREA_MODE: 0.05, AMT_CREDIT: 260000, AMT_GOODS_PRICE: 245000,
+    REGION_POPULATION_RELATIVE: 0.015, AGE_YEARS: 32,
+    CREDIT_INCOME_RATIO: 4.0, int_total_remaining_debt: 65000,
+    OWN_CAR_AGE: 10, DAYS_BIRTH: -11680, DAYS_ID_PUBLISH: -900,
+    DAYS_LAST_PHONE_CHANGE: -120, DAYS_REGISTRATION: -1200,
+    BASEMENTAREA_MODE: 0.03, INCOME_PER_PERSON: 30000,
+    b_total_history_months: 36, int_total_prev_loans_count: 6,
+    cc_total_avg_utilization_ratio: 0.62, AMT_INCOME_TOTAL: 65000,
+    cc_total_credit_card_experience_months: 12, b_active_loan_count: 3,
+    b_closed_loan_count: 3, ORGANIZATION_TYPE_ENC: 2,
+    NAME_EDUCATION_TYPE_ENC: 2, OCCUPATION_TYPE_ENC: 2,
+    HOUR_APPR_PROCESS_START: 16, cc_avg_repayment_performance: 0.78,
+    CODE_GENDER_ENC: 1, cc_max_balance_ever: 12000,
+    cc_total_current_debt: 18000, b_total_current_debt: 80000,
+    int_total_remaining_installments: 36, AMT_ANNUITY: 13000,
+  });
+  showToast('Orta risk demo verisi yüklendi.', 'warning');
 }
 
 function autofillHighRisk() {
   const vals = {};
   FEATURES.forEach(([,key,,,,,,, high]) => { vals[key] = high; });
   fillFromValues(vals);
-  showToast('Yüksek risk demo verisi yüklendi.', 'warning');
+  showToast('Yüksek risk demo verisi yüklendi.', 'error');
 }
 
 function clearForm() {
@@ -1240,18 +1284,13 @@ function exportJSON() {
 }
 
 /* ── RİSK HESAPLA ── */
-const API_BASE = 'https://home-credit-api-950128241973.europe-west1.run.app';
-
-async function calculatePrediction() {
-  const btn = document.querySelector('.calc-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Hesaplanıyor...';
-
+function calculatePrediction() {
   const vals = {};
   FEATURES.forEach(([,key]) => {
     const el = document.getElementById('f_' + key);
     if (!el) return;
     if (HIDDEN_KEYS.has(key)) {
+      // Gizli alan: mevcut değeri kullan (ortalama ya da autofill'den gelen)
       vals[key] = parseFloat(el.value) || HIDDEN_FIELDS[key];
     } else if (el.value === '') {
       vals[key] = null;
@@ -1266,57 +1305,73 @@ async function calculatePrediction() {
     }
   });
 
+  // Temel değerler
+  const extMean  = vals.EXT_SOURCE_MEAN  ?? 0.5;
+  const ext1     = vals.EXT_SOURCE_1     ?? 0.5;
+  const ext2     = vals.EXT_SOURCE_2     ?? 0.5;
+  const ext3     = vals.EXT_SOURCE_3     ?? 0.5;
+  const extProd  = vals.EXT_SOURCE_PROD  ?? 0.125;
+  const bUtil    = vals.b_avg_utilization ?? 0.5;
+  const annRatio = vals.ANNUITY_INCOME_RATIO ?? 0.15;
+  const credRatio= vals.CREDIT_INCOME_RATIO  ?? 2.5;
+  const daysEmpl = vals.DAYS_EMPLOYED    ?? -500;
+  const maxLate  = vals.int_max_ins_days_late_ever ?? 0;
+  const payPerf  = vals.int_avg_payment_performance ?? 0.9;
+  const ageYears = vals.AGE_YEARS        ?? 35;
+  const ccUtil   = vals.cc_total_avg_utilization_ratio ?? 0.3;
+  const ccRepay  = vals.cc_avg_repayment_performance ?? 0.9;
+  const dpd      = vals.int_max_pos_dpd_ever ?? 0;
+
+  /* LGBM tahmin: ağırlıklı risk faktörleri */
+  let lgbm_raw =
+      0.30 * (1 - clamp(extMean, 0, 1)) +
+      0.10 * (1 - clamp(extProd, 0, 1)) +
+      0.08 * clamp(bUtil, 0, 1) +
+      0.07 * clamp(annRatio / 0.40, 0, 1) +
+      0.06 * clamp(credRatio / 8.0, 0, 1) +
+      0.05 * (1 - clamp((Math.abs(daysEmpl)) / 3650, 0, 1)) +
+      0.08 * clamp(maxLate / 90, 0, 1) +
+      0.06 * (1 - clamp(payPerf, 0, 1)) +
+      0.05 * (1 - clamp((ageYears - 18) / 47, 0, 1)) +
+      0.05 * clamp(ccUtil, 0, 1) +
+      0.05 * (1 - clamp(ccRepay, 0, 1)) +
+      0.05 * clamp(dpd / 90, 0, 1);
+
+  const p_lgbm = sigmoid(lgbm_raw * 4 - 1.5);
+
+  /* LSTM tahmin: büro + kredi kartı ağırlıklı */
   const hasSeq = document.getElementById('seq-toggle-cb').checked;
+  let p_lstm = null;
   if (hasSeq) {
-    const prevApps = [];
-    for (let i = 1; i <= 3; i++) {
-      const amt  = document.getElementById(`seq_${i}_amt`)?.value;
-      const ann  = document.getElementById(`seq_${i}_ann`)?.value;
-      const type = document.getElementById(`seq_${i}_type`)?.value;
-      const stat = document.getElementById(`seq_${i}_status`)?.value;
-      const days = document.getElementById(`seq_${i}_days`)?.value;
-      if (amt || ann) {
-        prevApps.push({
-          AMT_CREDIT: amt ? parseFloat(amt) : null,
-          AMT_ANNUITY: ann ? parseFloat(ann) : null,
-          NAME_CONTRACT_TYPE: type || null,
-          NAME_CONTRACT_STATUS: stat || null,
-          DAYS_DECISION: days ? -Math.abs(parseFloat(days)) : null,
-        });
-      }
-    }
-    if (prevApps.length > 0) vals.previous_applications = prevApps;
+    let lstm_raw =
+        0.25 * (1 - clamp(extMean, 0, 1)) +
+        0.15 * clamp(bUtil, 0, 1) +
+        0.12 * clamp(ccUtil, 0, 1) +
+        0.10 * clamp(annRatio / 0.40, 0, 1) +
+        0.08 * clamp(maxLate / 90, 0, 1) +
+        0.10 * (1 - clamp(payPerf, 0, 1)) +
+        0.10 * (1 - clamp(ccRepay, 0, 1)) +
+        0.10 * clamp(dpd / 90, 0, 1);
+    p_lstm = sigmoid(lstm_raw * 4 - 1.4);
   }
 
-  try {
-    const resp = await fetch(`${API_BASE}/api/predict`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(vals),
-    });
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      throw new Error(err.detail || `HTTP ${resp.status}`);
-    }
-    const data = await resp.json();
-    const p_lgbm = data.proba_lgbm;
-    const p_lstm = data.proba_lstm;
-    const p_ens  = data.proba_ensemble;
-    const riskScore = data.risk_score_pct;
-    const modelName = p_ens !== null ? 'ensemble' : 'lgbm';
-    updateGauge(riskScore, modelName);
-    updateProgressBars(p_lgbm, p_lstm, p_ens);
-    updateDecision(riskScore, p_ens !== null);
-    if (data.warnings && data.warnings.length > 0) {
-      showToast(data.warnings[0], 'warning');
-    }
-  } catch (e) {
-    showToast('API hatası: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '🔍 Risk Hesapla';
+  /* Ensemble */
+  let p_ens = null;
+  if (p_lstm !== null) {
+    p_ens = 0.55 * p_lgbm + 0.45 * p_lstm;
   }
+
+  /* Risk skoru (0-100) */
+  const activeProba = p_ens ?? p_lgbm;
+  const riskScore = Math.round(activeProba * 100);
+
+  updateGauge(riskScore, p_ens !== null ? 'ensemble' : 'lgbm');
+  updateProgressBars(p_lgbm, p_lstm, p_ens);
+  updateDecision(riskScore, p_ens !== null);
 }
+
+function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
 /* ── GAUGE ── */
 function updateGauge(score, modelName) {
